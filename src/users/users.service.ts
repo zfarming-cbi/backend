@@ -35,11 +35,14 @@ export class UsersService {
     });
   }
 
-  private async comparePassword(
+  async comparePassword(
     password: string,
     passwordSaved: string,
   ): Promise<boolean> {
-    const match = await bcrypt.compare(password, passwordSaved);
+    const match = await bcrypt.compare(
+      bcrypt.hashSync(password, 10),
+      passwordSaved,
+    );
     return match;
   }
 }
