@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  backend:
+    command: 'yarn install;yarn start:dev'
+    working_dir: /home/app
+    volumes:
+      - ./:/home/app
+    ports:
+      - 3000:3000
+
+  zfarming-db:
+    ports:
+      - 3306:3306
+
+

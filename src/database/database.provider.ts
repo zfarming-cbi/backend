@@ -11,19 +11,22 @@ import {
   User,
 } from './entities';
 import { SEQUELIZE } from './constants';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 export const databaseProviders = [
   {
     provide: SEQUELIZE,
-    useFactory: async () => {
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: async (configService: ConfigService) => {
       const sequelize = new Sequelize({
-        dialect: 'mysql',
-        host: 'localhost',
         port: 3306,
-        username: 'root',
-        password: 'password',
-        database: 'db',
+        dialect: 'mysql',
         timezone: '-05:00',
+        host: configService.get('database.host'),
+        database: configService.get('database.name'),
+        username: configService.get('database.user'),
+        password: configService.get('database.password'),
       });
       sequelize.addModels([
         Company,

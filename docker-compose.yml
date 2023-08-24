@@ -16,12 +16,15 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      labels:
+        app: "com.zfarming.backend"
     restart: always
+    ports:
+      - 80:80
     depends_on: 
       - zfarming-db
-    env_file:
+    env_file: 
       - .env
-
     networks: 
       - zfarming
 
@@ -31,8 +34,6 @@ services:
     restart: always
     env_file:
       - .env
-    ports:
-      - 3306:3306
     volumes:
       - zfarming:/var/lib/mysql
     networks: 

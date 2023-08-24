@@ -14,6 +14,12 @@ export class Company extends Model {
 
   @Column({
     type: DataType.STRING,
+    allowNull: false,
+  })
+  nit: string;
+
+  @Column({
+    type: DataType.STRING,
     allowNull: true,
   })
   logo: string;
