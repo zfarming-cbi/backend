@@ -9,7 +9,15 @@ export class CompanyService {
     private companyRepository: typeof Company,
   ) {}
 
-  async create(name: string): Promise<Company> {
-    return await this.companyRepository.create({ name });
+  async create(name: string, nit: string): Promise<Company> {
+    return await this.companyRepository.create({ name, nit });
+  }
+
+  async findOne(nit: string): Promise<Company | null> {
+    return this.companyRepository.findOne({
+      where: {
+        nit,
+      },
+    });
   }
 }

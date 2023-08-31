@@ -17,16 +17,26 @@ export class AuthService {
     firstname: string;
     lastname: string;
     company: string;
+    nit: string;
   }): Promise<any> {
-    const company = await this.companyService.create(args.company);
+    const company = await this.companyService.findOne(args.nit);
+    if (company) throw new UnauthorizedException('El nit ya esta en uso');
+    const new_company = await this.companyService.create(
+      args.company,
+      args.nit,
+    );
     const user = await this.usersService.create({
       firstname: args.firstname,
       lastname: args.lastname,
       username: args.username,
       password: args.password,
-      companyId: company.id,
+      companyId: new_company.id,
     });
-    const payload = { sub: user.id, username: user.username };
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      companyid: user.companyId,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
@@ -39,7 +49,11 @@ export class AuthService {
     if (await this.validatePassword(pass, user.password)) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, username: user.username };
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      companyId: user.companyId,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
