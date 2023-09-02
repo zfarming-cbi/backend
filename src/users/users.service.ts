@@ -61,6 +61,27 @@ export class UsersService {
     });
   }
 
+  async update(
+    id: string,
+    args: {
+      firstname?: string;
+      lastname?: string;
+      password?: string;
+    },
+  ): Promise<User | null> {
+    await this.userRepository.update(args, { where: { id } });
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async delete(id: string): Promise<object> {
+    await this.userRepository.destroy({
+      where: {
+        id,
+      },
+    });
+    return { message: 'delete success' };
+  }
+
   async comparePassword(
     password: string,
     passwordSaved: string,

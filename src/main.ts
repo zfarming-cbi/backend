@@ -1,23 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-// import { ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+  const preffix = 'api/v1';
   const config = new DocumentBuilder()
+    .setBasePath(preffix)
     .setTitle('Z-FARMING')
     .setDescription('DOCS API Z-FARMING')
     .setVersion('1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/v1', app, document);
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix(preffix);
   app.useGlobalPipes(new ValidationPipe());
-  // const configService = app.get(ConfigService);
-  // const port = configService.get('PORT');
-  await app.listen(3000);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('/docs', app, document);
+  const configService = app.get(ConfigService);
+  const port = configService.get('port');
+  await app.listen(port);
 }
 
 bootstrap();

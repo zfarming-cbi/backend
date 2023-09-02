@@ -11,43 +11,43 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { FarmService } from './farm.service';
 import { JwtService } from '@nestjs/jwt';
-import { FarmDTO } from './dto/farm.dto';
+import { PlantService } from './plant.service';
+import { PlantDTO } from './dto/plant.dto';
 
-@ApiTags('farm')
-@Controller('farms')
-export class FarmController {
+@ApiTags('plant')
+@Controller('plants')
+export class PlantController {
   constructor(
-    private farmService: FarmService,
+    private plantService: PlantService,
     private jwtService: JwtService,
   ) {}
 
   @Get('/')
   @HttpCode(HttpStatus.OK)
-  getFarms(@Request() req: any) {
+  getPlants(@Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.farmService.findAll(decodeToken);
+    return this.plantService.findAll(decodeToken);
   }
 
   @Post('/')
   @HttpCode(HttpStatus.OK)
-  createFarms(@Body() farmDto: FarmDTO, @Request() req: any) {
+  createPlant(@Body() plantDto: PlantDTO, @Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.farmService.create(farmDto, decodeToken);
+    return this.plantService.create(plantDto, decodeToken);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  updateUser(@Param('id') id: string, @Body() farmDto: FarmDTO) {
-    return this.farmService.update(id, farmDto);
+  updatePlant(@Param('id') id: string, @Body() plantDto: PlantDTO) {
+    return this.plantService.update(id, plantDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  deleteUser(@Param('id') id: string) {
-    return this.farmService.delete(id);
+  deletePlant(@Param('id') id: string) {
+    return this.plantService.delete(id);
   }
 }

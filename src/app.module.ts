@@ -6,6 +6,9 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { FarmModule } from './farm/farm.module';
+import { DeviceModule } from './device/device.module';
+import { PlantModule } from './plant/plant.module';
+import { SensorModule } from './sensor/sensor.module';
 
 @Module({
   imports: [
@@ -19,6 +22,9 @@ import { FarmModule } from './farm/farm.module';
     CompanyModule,
     UsersModule,
     FarmModule,
+    DeviceModule,
+    PlantModule,
+    SensorModule,
   ],
   controllers: [],
   providers: [],

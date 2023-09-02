@@ -43,4 +43,30 @@ export class FarmService {
       },
     });
   }
+
+  async update(
+    id: string,
+    args: {
+      name?: string;
+      description?: string;
+      start_crop_dt?: string;
+      end_crop_dt?: string;
+    },
+  ): Promise<Farm | null> {
+    await this.farmRepository.update(args, {
+      where: {
+        id,
+      },
+    });
+    return this.farmRepository.findOne({ where: { id } });
+  }
+
+  async delete(id: string): Promise<object> {
+    await this.farmRepository.destroy({
+      where: {
+        id,
+      },
+    });
+    return { message: 'delete success' };
+  }
 }

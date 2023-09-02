@@ -5,17 +5,18 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
   Post,
   Request,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { UserDTO } from 'src/auth/dto/user.dto';
+import { UserDTO } from 'src/users/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('users')
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(
     private usersService: UsersService,
@@ -32,25 +33,21 @@ export class UsersController {
 
   @Post('/')
   @HttpCode(HttpStatus.OK)
-  createUser(@Body() userDTO: UserDTO, @Request() req: any) {
+  createUser(@Body() userDto: UserDTO, @Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = this.jwtService.decode(token);
-    return this.usersService.create(userDTO, decodedToken);
+    return this.usersService.create(userDto, decodedToken);
   }
 
-  @Patch('/')
+  @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  editUser(@Body() userDTO: UserDTO, @Request() req: any) {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = this.jwtService.decode(token);
-    return this.usersService.create(userDTO, decodedToken);
+  updateUser(@Param('id') id: string, @Body() userDto: UserDTO) {
+    return this.usersService.update(id, userDto);
   }
 
-  @Delete('/')
+  @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  deleteUser(@Body() userDTO: UserDTO, @Request() req: any) {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = this.jwtService.decode(token);
-    return this.usersService.create(userDTO, decodedToken);
+  deleteUser(@Param('id') id: string) {
+    return this.usersService.delete(id);
   }
 }
