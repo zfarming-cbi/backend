@@ -36,6 +36,12 @@ export class User extends Model {
 
   @Column({
     type: DataType.STRING,
+    allowNull: true,
+  })
+  uuid_forgot: string;
+
+  @Column({
+    type: DataType.STRING,
     allowNull: false,
     set(this, val: string) {
       this.setDataValue('password', bcrypt.hashSync(val, 10));

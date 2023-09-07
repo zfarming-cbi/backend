@@ -6,4 +6,14 @@ export default () => ({
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
   },
+  mail: {
+    host: process.env.SMTP_SERVER,
+    port: process.env.SMTP_PORT,
+    sender: process.env.MAIL_SENDER,
+    password: process.env.MAIL_PASSWORD,
+  },
+  urls: {
+    link_recover_password: process.env.URL_RECOVER_PASSWORD,
+    view_recover_password: process.env.VIEW_RECOVER_PASSWORD,
+  },
 });

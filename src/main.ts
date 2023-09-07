@@ -8,10 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   const preffix = 'api/v1';
   const config = new DocumentBuilder()
-    .setBasePath(preffix)
     .setTitle('Z-FARMING')
     .setDescription('DOCS API Z-FARMING')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   app.setGlobalPrefix(preffix);
   app.useGlobalPipes(new ValidationPipe());

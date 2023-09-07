@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { UserDTO } from 'src/users/dto/user.dto';
+import { UserDTO } from 'src/user/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('users')
@@ -23,7 +23,7 @@ export class UsersController {
     private jwtService: JwtService,
   ) {}
 
-  @Get('/')
+  @Get('/all')
   @HttpCode(HttpStatus.OK)
   getUsers(@Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
@@ -37,6 +37,12 @@ export class UsersController {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = this.jwtService.decode(token);
     return this.usersService.create(userDto, decodedToken);
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  getUser(@Param('id') id: string) {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')

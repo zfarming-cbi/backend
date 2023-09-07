@@ -10,12 +10,13 @@ import {
   Post,
   Request,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FarmService } from './farm.service';
 import { JwtService } from '@nestjs/jwt';
 import { FarmDTO } from './dto/farm.dto';
 
 @ApiTags('farm')
+@ApiBearerAuth()
 @Controller('farms')
 export class FarmController {
   constructor(
@@ -28,6 +29,7 @@ export class FarmController {
   getFarms(@Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
+    console.log(decodeToken);
     return this.farmService.findAll(decodeToken);
   }
 

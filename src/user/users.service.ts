@@ -7,6 +7,7 @@ import {
 import { USER_REPOSITORY } from 'src/database/constants';
 import { User } from 'src/database/entities';
 import * as bcrypt from 'bcrypt';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -43,15 +44,19 @@ export class UsersService {
     });
   }
 
-  async findOne(username: string): Promise<User | null> {
+  async findOne(filter_: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: {
-        username,
+        [Op.or]: [
+          { username: filter_ },
+          { uuid_forgot: filter_ },
+          { id: filter_ },
+        ],
       },
     });
   }
 
-  async findAll(tokenDecode?: any): Promise<User[] | null> {
+  async findAll(tokenDecode?: any): Promise<User[]> {
     const companyId = tokenDecode.companyId;
     Logger.log(companyId);
     return this.userRepository.findAll({
@@ -64,16 +69,28 @@ export class UsersService {
   async update(
     id: string,
     args: {
+      username?: string;
       firstname?: string;
       lastname?: string;
       password?: string;
+      uuid_forgot?: string;
     },
   ): Promise<User | null> {
     await this.userRepository.update(args, { where: { id } });
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async delete(id: string): Promise<object> {
+  async delete(id: string, tokenDecode?: any): Promise<object> {
+    const userId = tokenDecode.sub;
+    if (id === userId) {
+      throw new UnauthorizedException(
+        'Usuario en sesión, no se puede eliminar',
+      );
+    }
+    const users = await this.findAll();
+    if (users.length <= 1) {
+      throw new UnauthorizedException('No se puede borrar el usuario');
+    }
     await this.userRepository.destroy({
       where: {
         id,

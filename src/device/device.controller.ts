@@ -10,25 +10,26 @@ import {
   Post,
   Request,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { DeviceService } from './device.service';
-import { DeviceDTO } from './dto/device.dto';
+import { DeviceDTO, UpdateDeviceDTO } from './dto/device.dto';
 
 @ApiTags('device')
-@Controller('devices')
+@ApiBearerAuth()
+@Controller('device')
 export class DeviceController {
   constructor(
     private deviceService: DeviceService,
     private jwtService: JwtService,
   ) {}
 
-  @Get('/')
+  @Get('/all/:farmid?')
   @HttpCode(HttpStatus.OK)
-  getDevices(@Request() req: any) {
+  getDevices(@Param('farmid') farmid: string, @Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.deviceService.findAll(decodeToken);
+    return this.deviceService.findAll(farmid, decodeToken);
   }
 
   @Post('/')
@@ -41,7 +42,7 @@ export class DeviceController {
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  updateDevice(@Param('id') id: string, @Body() deviceDto: DeviceDTO) {
+  updateDevice(@Param('id') id: string, @Body() deviceDto: UpdateDeviceDTO) {
     return this.deviceService.update(id, deviceDto);
   }
 

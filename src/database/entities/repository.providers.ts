@@ -5,9 +5,9 @@ import {
   FARM_REPOSITORY,
   GALERY_PLANTS_COMMENTS_REPOSITORY,
   GALERY_PLANTS_LIKES_REPOSITORY,
-  MEASURING_HISOTRY_REPOSITORY,
   PLANT_REPOSITORY,
   SENSOR_REPOSITORY,
+  MEASURING_HISTORY_REPOSITORY,
 } from '../constants';
 import {
   Company,
@@ -55,7 +55,7 @@ export const repositoryProviders = [
     useValue: Sensor,
   },
   {
-    provide: MEASURING_HISOTRY_REPOSITORY,
+    provide: MEASURING_HISTORY_REPOSITORY,
     useValue: MeassuringHistorical,
   },
 ];

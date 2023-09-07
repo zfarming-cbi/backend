@@ -1,7 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CompanyService } from 'src/company/company.service';
-import { UsersService } from 'src/users/users.service';
+import { MailService } from 'src/mail/mail.service';
+import { UsersService } from 'src/user/users.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -9,6 +12,8 @@ export class AuthService {
     private usersService: UsersService,
     private companyService: CompanyService,
     private jwtService: JwtService,
+    private mailService: MailService,
+    private configService: ConfigService,
   ) {}
 
   async signup(args: {
@@ -64,5 +69,24 @@ export class AuthService {
     passwordSaved: string,
   ): Promise<boolean> {
     return this.usersService.comparePassword(password, passwordSaved);
+  }
+
+  async forgotPassword(username: string): Promise<object> {
+    const user = await this.usersService.findOne(username);
+    if (!user) throw new UnauthorizedException();
+    const uuid = uuidv4();
+    const url = `${this.configService.get(
+      'urls.link_recover_password',
+    )}/${uuid}`;
+    await this.mailService.sendMail(user, url, 'Restablece la contraseña');
+    await this.usersService.update(user.id, { uuid_forgot: uuid });
+    return { message: 'Se ha enviado un enlace para recuperar la contraseña' };
+  }
+
+  async recoverPassword(uuid: string): Promise<object> {
+    const user = await this.usersService.findOne(uuid);
+    if (!user) throw new UnauthorizedException('El enlace ya expiro');
+    await this.usersService.update(user.id, { uuid_forgot: '' });
+    return { url: this.configService.get('urls.view_recover_password') };
   }
 }

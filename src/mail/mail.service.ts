@@ -6,17 +6,14 @@ import { User } from 'src/database/entities';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(user: User, token: string) {
-    const url = `example.com/auth/confirm?token=${token}`;
-
+  async sendMail(user: User, url: string, subject: string) {
     await this.mailerService.sendMail({
       to: user.username,
-      // from: '"Support Team" <support@example.com>', // override default from
-      subject: 'Welcome to Nice App! Confirm your Email',
-      template: './confirmation', // `.hbs` extension is appended automatically
+      from: '"Support Team" <support@example.com>',
+      subject: subject,
+      template: 'forgotPassword',
       context: {
-        // ✏️ filling curly brackets with content
-        name: user.username,
+        name: user.firstname,
         url,
       },
     });

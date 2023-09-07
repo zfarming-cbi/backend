@@ -14,8 +14,6 @@ export class DeviceService {
       name: string;
       description: string;
       code: string;
-      farmId: number;
-      plantId: number;
       companyId?: string;
     },
     tokenDecode?: any,
@@ -32,22 +30,24 @@ export class DeviceService {
     });
   }
 
-  async findAll(tokenDecode?: any): Promise<Device[] | null> {
+  async findAll(farmId?: string, tokenDecode?: any): Promise<Device[] | null> {
     const companyId = tokenDecode.companyId;
+    const builtFilter: { companyId: string; farmId?: string } = {
+      companyId: companyId,
+    };
+    if (farmId) {
+      builtFilter.farmId = farmId;
+    }
     return this.deviceRepository.findAll({
-      where: {
-        companyId,
-      },
+      where: builtFilter,
     });
   }
 
   async update(
     id: string,
     args: {
-      name?: string;
-      description?: string;
-      start_crop_dt?: string;
-      end_crop_dt?: string;
+      plantId?: string;
+      farmId?: string;
     },
   ): Promise<Device | null> {
     await this.deviceRepository.update(args, {
