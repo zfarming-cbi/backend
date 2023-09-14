@@ -32,7 +32,8 @@ export class AuthService {
       args.company,
       args.nit,
     );
-    const rol = await this.rolService.findOne('BASIC');
+    const rol =
+      await this.rolService.findOne('ADMIN'); /* @todo: Magic string no tener */
     const user = await this.usersService.create(
       {
         firstname: args.firstname,
@@ -89,10 +90,24 @@ export class AuthService {
     return { message: 'Se ha enviado un enlace para recuperar la contraseña' };
   }
 
-  async recoverPassword(uuid: string): Promise<object> {
+  async recoverPassword(
+    uuid: string,
+    recoverPassword: {
+      password: string;
+    },
+  ): Promise<object> {
     const user = await this.usersService.findOne(uuid);
     if (!user) throw new UnauthorizedException('El enlace ya expiro');
-    await this.usersService.update(user.id, { uuid_forgot: '' });
+    await this.usersService.update(user.id, {
+      uuid_forgot: '',
+      password: recoverPassword.password,
+    });
+    return { message: 'Cambio de contraseña exitoso' };
+  }
+
+  async recoverPasswordScreen(uuid: string): Promise<object> {
+    const user = await this.usersService.findOne(uuid);
+    if (!user) throw new UnauthorizedException('El enlace ya expiro');
     return { url: this.configService.get('urls.view_recover_password') };
   }
 }

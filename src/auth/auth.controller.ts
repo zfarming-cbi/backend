@@ -5,13 +5,19 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Redirect,
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/isPublic';
-import { ForgotPasswordDTO, LoginDTO, SignupDTO } from './dto';
+import {
+  ForgotPasswordDTO,
+  LoginDTO,
+  RecoverPasswordDTO,
+  SignupDTO,
+} from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
@@ -41,11 +47,22 @@ export class AuthController {
   }
 
   @Public()
-  @Get('recover-password/:uuid')
+  @Get('recover-password-screen/:uuid')
   @Redirect()
   @HttpCode(HttpStatus.OK)
-  recoverPassword(@Param('uuid') uuid: string) {
-    return this.authService.recoverPassword(uuid);
+  recoverPasswordScreen(@Param('uuid') uuid: string) {
+    return this.authService.recoverPasswordScreen(uuid);
+  }
+
+  @Public()
+  @Patch('recover-password/:uuid')
+  @Redirect()
+  @HttpCode(HttpStatus.OK)
+  recoverPassword(
+    @Param('uuid') uuid: string,
+    @Body() recoverPasswordDto: RecoverPasswordDTO,
+  ) {
+    return this.authService.recoverPassword(uuid, recoverPasswordDto);
   }
 
   @ApiBearerAuth()

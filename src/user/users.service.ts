@@ -36,7 +36,6 @@ export class UsersService {
     if (tokenDecode) {
       companyId = tokenDecode.companyId;
     }
-    console.log(rol);
     return await this.userRepository.create(
       {
         firstname: args.firstname,
