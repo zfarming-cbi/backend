@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { USER_REPOSITORY } from 'src/database/constants';
-import { User } from 'src/database/entities';
+import { Farm, Rol, User } from 'src/database/entities';
 import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
@@ -20,14 +20,15 @@ export class UsersService {
     args: {
       firstname: string;
       lastname: string;
-      username: string;
+      email: string;
       password: string;
       companyId?: string;
     },
     tokenDecode?: any,
+    rol?: any,
   ): Promise<User> {
-    const user = await this.findOne(args.username);
-    if (user) throw new UnauthorizedException('El username ya esta en uso');
+    const user = await this.findOne(args.email);
+    if (user) throw new UnauthorizedException('El email ya esta en uso');
     let companyId;
     if (args.companyId) {
       companyId = args.companyId;
@@ -35,24 +36,30 @@ export class UsersService {
     if (tokenDecode) {
       companyId = tokenDecode.companyId;
     }
-    return await this.userRepository.create({
-      firstname: args.firstname,
-      lastname: args.lastname,
-      username: args.username,
-      password: args.password,
-      companyId: companyId,
-    });
+    console.log(rol);
+    return await this.userRepository.create(
+      {
+        firstname: args.firstname,
+        lastname: args.lastname,
+        email: args.email,
+        password: args.password,
+        companyId: companyId,
+        rols: [rol],
+      },
+      { include: Rol },
+    );
   }
 
   async findOne(filter_: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: {
         [Op.or]: [
-          { username: filter_ },
+          { email: filter_ },
           { uuid_forgot: filter_ },
           { id: filter_ },
         ],
       },
+      include: [Rol, Farm],
     });
   }
 
@@ -69,7 +76,7 @@ export class UsersService {
   async update(
     id: string,
     args: {
-      username?: string;
+      email?: string;
       firstname?: string;
       lastname?: string;
       password?: string;

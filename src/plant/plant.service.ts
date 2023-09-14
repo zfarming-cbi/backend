@@ -14,7 +14,7 @@ export class PlantService {
       name: string;
       content: string;
       image: string;
-      public: string;
+      public: boolean;
       growing_time: string;
       companyId?: string;
     },
@@ -32,22 +32,27 @@ export class PlantService {
     });
   }
 
-  async findAll(tokenDecode?: any): Promise<Plant[] | null> {
+  async findAll(
+    pagination: {
+      limit: number;
+      offset: number;
+    },
+    tokenDecode?: any,
+  ): Promise<Plant[] | null> {
     const companyId = tokenDecode.companyId;
     return this.plantRepository.findAll({
-      where: {
-        companyId,
-      },
+      offset: 5,
+      limit: 10,
+      where: { companyId },
     });
   }
-
   async update(
     id: string,
     args: {
       name?: string;
       content?: string;
       image?: string;
-      public?: string;
+      public?: boolean;
       growing_time?: string;
     },
   ): Promise<Plant | null> {

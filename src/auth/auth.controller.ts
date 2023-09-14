@@ -30,14 +30,14 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   signIn(@Body() loginDto: LoginDTO) {
-    return this.authService.login(loginDto.username, loginDto.password);
+    return this.authService.login(loginDto.email, loginDto.password);
   }
 
   @Public()
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDTO) {
-    return this.authService.forgotPassword(forgotPasswordDto.username);
+    return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
   @Public()

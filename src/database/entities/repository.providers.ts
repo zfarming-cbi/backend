@@ -8,6 +8,7 @@ import {
   PLANT_REPOSITORY,
   SENSOR_REPOSITORY,
   MEASURING_HISTORY_REPOSITORY,
+  ROL_REPOSITORY,
 } from '../constants';
 import {
   Company,
@@ -17,6 +18,7 @@ import {
   Plant,
   PlantGaleryComments,
   PlantGaleryLikes,
+  Rol,
   Sensor,
   User,
 } from './';
@@ -57,5 +59,9 @@ export const repositoryProviders = [
   {
     provide: MEASURING_HISTORY_REPOSITORY,
     useValue: MeassuringHistorical,
+  },
+  {
+    provide: ROL_REPOSITORY,
+    useValue: Rol,
   },
 ];

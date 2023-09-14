@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CompanyService } from 'src/company/company.service';
 import { MailService } from 'src/mail/mail.service';
+import { RolService } from 'src/rol/rol.service';
 import { UsersService } from 'src/user/users.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,10 +15,11 @@ export class AuthService {
     private jwtService: JwtService,
     private mailService: MailService,
     private configService: ConfigService,
+    private rolService: RolService,
   ) {}
 
   async signup(args: {
-    username: string;
+    email: string;
     password: string;
     firstname: string;
     lastname: string;
@@ -30,16 +32,20 @@ export class AuthService {
       args.company,
       args.nit,
     );
-    const user = await this.usersService.create({
-      firstname: args.firstname,
-      lastname: args.lastname,
-      username: args.username,
-      password: args.password,
-      companyId: new_company.id,
-    });
+    const rol = await this.rolService.findOne('BASIC');
+    const user = await this.usersService.create(
+      {
+        firstname: args.firstname,
+        lastname: args.lastname,
+        email: args.email,
+        password: args.password,
+        companyId: new_company.id,
+      },
+      rol,
+    );
     const payload = {
       sub: user.id,
-      username: user.username,
+      email: user.email,
       companyid: user.companyId,
     };
     return {
@@ -47,8 +53,8 @@ export class AuthService {
     };
   }
 
-  async login(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
+  async login(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOne(email);
     if (!user) throw new UnauthorizedException();
 
     if (await this.validatePassword(pass, user.password)) {
@@ -56,7 +62,7 @@ export class AuthService {
     }
     const payload = {
       sub: user.id,
-      username: user.username,
+      email: user.email,
       companyId: user.companyId,
     };
     return {
@@ -71,8 +77,8 @@ export class AuthService {
     return this.usersService.comparePassword(password, passwordSaved);
   }
 
-  async forgotPassword(username: string): Promise<object> {
-    const user = await this.usersService.findOne(username);
+  async forgotPassword(email: string): Promise<object> {
+    const user = await this.usersService.findOne(email);
     if (!user) throw new UnauthorizedException();
     const uuid = uuidv4();
     const url = `${this.configService.get(

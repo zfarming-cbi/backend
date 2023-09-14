@@ -7,8 +7,11 @@ import {
   Plant,
   PlantGaleryComments,
   PlantGaleryLikes,
+  Rol,
   Sensor,
   User,
+  UserFarm,
+  UserRol,
 } from './entities';
 import { SEQUELIZE } from './constants';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -38,6 +41,9 @@ export const databaseProviders = [
         Sensor,
         Farm,
         MeassuringHistorical,
+        Rol,
+        UserFarm,
+        UserRol,
       ]);
       await sequelize.sync();
       return sequelize;

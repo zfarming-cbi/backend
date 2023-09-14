@@ -11,6 +11,8 @@ import { PlantModule } from './plant/plant.module';
 import { SensorModule } from './sensor/sensor.module';
 import { MeasuringHistoryModule } from './measuringHistory/measuringHistory.module';
 import { MailModule } from './mail/mail.module';
+import { RolModule } from './rol/rol.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -18,6 +20,9 @@ import { MailModule } from './mail/mail.module';
       isGlobal: true,
       envFilePath: '.env',
       load: [configuration],
+    }),
+    MulterModule.register({
+      dest: './uploads', // Directorio de almacenamiento para los archivos cargados.
     }),
     DatabaseModule,
     AuthModule,
@@ -29,6 +34,7 @@ import { MailModule } from './mail/mail.module';
     SensorModule,
     MailModule,
     MeasuringHistoryModule,
+    RolModule,
   ],
   controllers: [],
   providers: [],

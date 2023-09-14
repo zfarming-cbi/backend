@@ -27,6 +27,7 @@ export class CompanyService {
     args: {
       name?: string;
       nit?: string;
+      logo?: string;
     },
   ): Promise<Company | null> {
     await this.companyRepository.update(args, {

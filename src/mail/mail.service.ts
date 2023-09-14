@@ -8,7 +8,7 @@ export class MailService {
 
   async sendMail(user: User, url: string, subject: string) {
     await this.mailerService.sendMail({
-      to: user.username,
+      to: user.email,
       from: '"Support Team" <support@example.com>',
       subject: subject,
       template: 'forgotPassword',
