@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PLANT_REPOSITORY } from 'src/database/constants';
-import { Plant } from 'src/database/entities';
+import {
+  Plant,
+  PlantGaleryComments,
+  PlantGaleryLikes,
+} from 'src/database/entities';
 
 @Injectable()
 export class PlantService {
@@ -34,18 +38,36 @@ export class PlantService {
 
   async findAll(
     pagination: {
-      limit: number;
-      offset: number;
+      page: string;
+      perPage: string;
     },
     tokenDecode?: any,
   ): Promise<Plant[] | null> {
+    const page = parseInt(pagination.page);
+    const perPage = parseInt(pagination.perPage);
+    const offset = (page - 1) * perPage;
     const companyId = tokenDecode.companyId;
     return this.plantRepository.findAll({
-      offset: 5,
-      limit: 10,
+      limit: perPage,
+      offset: offset,
       where: { companyId },
     });
   }
+
+  async findAllForGalery(pagination: {
+    page: string;
+    perPage: string;
+  }): Promise<Plant[] | null> {
+    const page = parseInt(pagination.page);
+    const perPage = parseInt(pagination.perPage);
+    const offset = (page - 1) * perPage;
+    return this.plantRepository.findAll({
+      limit: perPage,
+      offset: offset,
+      include: [PlantGaleryLikes, PlantGaleryComments],
+    });
+  }
+
   async update(
     id: string,
     args: {

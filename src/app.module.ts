@@ -13,6 +13,9 @@ import { MeasuringHistoryModule } from './measuringHistory/measuringHistory.modu
 import { MailModule } from './mail/mail.module';
 import { RolModule } from './rol/rol.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { UserRolModule } from './userRol/userRol.module';
+import { PlantGaleryCommentModule } from './plantGaleryComment/plantGaleryComment.module';
+import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { MulterModule } from '@nestjs/platform-express';
     MailModule,
     MeasuringHistoryModule,
     RolModule,
+    UserRolModule,
+    PlantGaleryCommentModule,
+    PlantGaleryLikeModule,
   ],
   controllers: [],
   providers: [],

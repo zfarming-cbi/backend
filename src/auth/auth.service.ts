@@ -26,24 +26,21 @@ export class AuthService {
     company: string;
     nit: string;
   }): Promise<any> {
-    const company = await this.companyService.findOne(args.nit);
+    const company = await this.companyService.findOne(args);
     if (company) throw new UnauthorizedException('El nit ya esta en uso');
     const new_company = await this.companyService.create(
       args.company,
       args.nit,
     );
-    const rol =
-      await this.rolService.findOne('ADMIN'); /* @todo: Magic string no tener */
-    const user = await this.usersService.create(
-      {
-        firstname: args.firstname,
-        lastname: args.lastname,
-        email: args.email,
-        password: args.password,
-        companyId: new_company.id,
-      },
-      rol,
-    );
+    // const rol = await this.rolService.findOne(ROLES.ADMIN);
+    // console.log('**** Aqui esta el rol', rol);
+    const user = await this.usersService.create({
+      firstname: args.firstname,
+      lastname: args.lastname,
+      email: args.email,
+      password: args.password,
+      companyId: new_company.id,
+    });
     const payload = {
       sub: user.id,
       email: user.email,
@@ -108,6 +105,8 @@ export class AuthService {
   async recoverPasswordScreen(uuid: string): Promise<object> {
     const user = await this.usersService.findOne(uuid);
     if (!user) throw new UnauthorizedException('El enlace ya expiro');
-    return { url: this.configService.get('urls.view_recover_password') };
+    return {
+      url: `${this.configService.get('urls.view_recover_password')}/${uuid}`,
+    };
   }
 }

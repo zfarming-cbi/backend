@@ -9,11 +9,16 @@ export class PlantGaleryLikeService {
     private plantGaleryLikeRepository: typeof PlantGaleryLikes,
   ) {}
   value: string;
-  async create(args: {
-    like: number;
-    plantId: string;
-    userId: string;
-  }): Promise<PlantGaleryLikes> {
+  async create(
+    args: {
+      like: number;
+      plantId: string;
+      userId?: string;
+    },
+    decodeToken?: any,
+  ): Promise<PlantGaleryLikes> {
+    const userId = decodeToken.sub;
+    args.userId = userId;
     return await this.plantGaleryLikeRepository.create(args);
   }
 

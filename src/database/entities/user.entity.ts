@@ -9,10 +9,9 @@ import {
   BelongsToMany,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
-import { Company, Farm, Rol, UserFarm } from './';
+import { Company, Farm, UserFarm, UserRol } from './';
 import { PlantGaleryLikes } from './plantGaleryLikes.entity';
 import { PlantGaleryComments } from './plantGaleryComments.entity';
-import { UserRol } from './userRol.entity';
 
 @Table({
   timestamps: true,
@@ -67,6 +66,6 @@ export class User extends Model {
   @BelongsToMany(() => Farm, () => UserFarm)
   farms: Farm[];
 
-  @BelongsToMany(() => Rol, () => UserRol)
-  rols: Rol[];
+  @HasMany(() => UserRol)
+  rols: UserRol[];
 }

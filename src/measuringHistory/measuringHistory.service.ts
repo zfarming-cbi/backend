@@ -13,7 +13,6 @@ export class MeasuringHistoryService {
     value: string;
     sensorId: string;
     deviceId: string;
-    farmId: string;
   }): Promise<MeassuringHistorical> {
     return await this.measuringHistoryRepository.create(args);
   }

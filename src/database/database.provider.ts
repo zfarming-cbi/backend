@@ -45,6 +45,8 @@ export const databaseProviders = [
         UserFarm,
         UserRol,
       ]);
+      User.belongsToMany(Rol, { through: UserRol });
+      Rol.belongsToMany(User, { through: UserRol });
       await sequelize.sync();
       return sequelize;
     },

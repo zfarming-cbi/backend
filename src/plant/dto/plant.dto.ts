@@ -13,6 +13,6 @@ export class PlantDTO {
 }
 
 export class PaginationPlantDTO {
-  limit: number = 10;
-  offset: number = 5;
+  page: string = '1';
+  perPage: string = '5';
 }

@@ -14,10 +14,11 @@ export class CompanyService {
     return await this.companyRepository.create({ name, nit });
   }
 
-  async findOne(filter_: string): Promise<Company | null> {
+  async findOne(search: any): Promise<Company | null> {
+    const value = search.nit ? search.nit : search.companyId;
     return this.companyRepository.findOne({
       where: {
-        [Op.or]: [{ nit: filter_ }, { id: filter_ }],
+        [Op.or]: [{ nit: value }, { id: value }],
       },
     });
   }

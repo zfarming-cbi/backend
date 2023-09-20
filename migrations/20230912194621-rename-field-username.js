@@ -3,7 +3,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.renameColumn('Users', 'username', 'email');
+    const columnName = 'email';
+    const tableName = 'Users';
+    const table = await queryInterface.describeTable(tableName);
+    if (!table[columnName]) {
+      await queryInterface.renameColumn('Users', 'username', 'email');
+    }
     /**
      * Add altering commands here.
      *

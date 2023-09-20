@@ -9,6 +9,7 @@ import {
   SENSOR_REPOSITORY,
   MEASURING_HISTORY_REPOSITORY,
   ROL_REPOSITORY,
+  USER_ROL_REPOSITORY,
 } from '../constants';
 import {
   Company,
@@ -21,6 +22,7 @@ import {
   Rol,
   Sensor,
   User,
+  UserRol,
 } from './';
 
 export const repositoryProviders = [
@@ -63,5 +65,9 @@ export const repositoryProviders = [
   {
     provide: ROL_REPOSITORY,
     useValue: Rol,
+  },
+  {
+    provide: USER_ROL_REPOSITORY,
+    useValue: UserRol,
   },
 ];

@@ -10,7 +10,7 @@ export class RolService {
   ) {}
 
   async findOne(code: string): Promise<Rol | null> {
-    console.log('*** Rol repository', this.rolRepository);
+    console.log('Aqui esta el repo o la entity', this.rolRepository);
     return this.rolRepository.findOne({
       where: {
         code,

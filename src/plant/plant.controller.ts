@@ -20,9 +20,9 @@ import { PaginationPlantDTO, PlantDTO } from './dto/plant.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { destination, renameImage } from 'src/helpers/images/images.helpers';
+import { Public } from 'src/auth/decorators/isPublic';
 
 @ApiTags('plant')
-@ApiBearerAuth()
 @Controller('plants')
 export class PlantController {
   constructor(
@@ -38,7 +38,15 @@ export class PlantController {
     return this.plantService.findAll(pagination, decodeToken);
   }
 
+  @Public()
+  @Get('/galery')
+  @HttpCode(HttpStatus.OK)
+  getAllPlants(@Query() pagination: PaginationPlantDTO) {
+    return this.plantService.findAllForGalery(pagination);
+  }
+
   @Post('/')
+  @ApiBearerAuth()
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -64,6 +72,7 @@ export class PlantController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({

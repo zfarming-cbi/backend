@@ -1,11 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  BelongsToMany,
-} from 'sequelize-typescript';
-import { User } from './user.entity';
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import { UserRol } from './userRol.entity';
 
 @Table({
@@ -24,6 +17,6 @@ export class Rol extends Model {
   })
   code: string;
 
-  @BelongsToMany(() => User, () => UserRol)
-  users: User[];
+  @HasMany(() => UserRol)
+  users: UserRol[];
 }

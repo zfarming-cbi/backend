@@ -9,12 +9,17 @@ export class PlantGaleryCommentService {
     private plantGaleryCommentRepository: typeof PlantGaleryComments,
   ) {}
   value: string;
-  async create(args: {
-    message: string;
-    date: string;
-    userId: string;
-    plantId: string;
-  }): Promise<PlantGaleryComments> {
+  async create(
+    args: {
+      message: string;
+      date: string;
+      plantId: string;
+      userId?: number;
+    },
+    decodeToken?: any,
+  ): Promise<PlantGaleryComments> {
+    const userId = decodeToken.sub;
+    args.userId = userId;
     return await this.plantGaleryCommentRepository.create(args);
   }
 

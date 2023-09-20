@@ -29,7 +29,6 @@ export class FarmController {
   getFarms(@Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    console.log(decodeToken);
     return this.farmService.findAll(decodeToken);
   }
 
