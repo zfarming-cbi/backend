@@ -11,7 +11,6 @@ import {
   Sensor,
   User,
   UserFarm,
-  UserRol,
 } from './entities';
 import { SEQUELIZE } from './constants';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -43,10 +42,17 @@ export const databaseProviders = [
         MeassuringHistorical,
         Rol,
         UserFarm,
-        UserRol,
       ]);
-      User.belongsToMany(Rol, { through: UserRol });
-      Rol.belongsToMany(User, { through: UserRol });
+      User.belongsToMany(Rol, {
+        through: 'UserRol',
+        as: 'rols',
+        foreignKey: 'UserId',
+      });
+      Rol.belongsToMany(User, {
+        through: 'UserRol',
+        as: 'users',
+        foreignKey: 'RolId',
+      });
       await sequelize.sync();
       return sequelize;
     },

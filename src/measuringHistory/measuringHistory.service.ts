@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MEASURING_HISTORY_REPOSITORY } from 'src/database/constants';
-import { MeassuringHistorical } from 'src/database/entities';
+import {
+  Device,
+  Farm,
+  MeassuringHistorical,
+  Sensor,
+} from 'src/database/entities';
 
 @Injectable()
 export class MeasuringHistoryService {
@@ -13,8 +18,15 @@ export class MeasuringHistoryService {
     value: string;
     sensorId: string;
     deviceId: string;
+    farmId?: string;
   }): Promise<MeassuringHistorical> {
-    return await this.measuringHistoryRepository.create(args);
+    const device = await Device.findOne({
+      where: { id: args.deviceId },
+    });
+    return await this.measuringHistoryRepository.create({
+      ...args,
+      farmId: device?.farmId ?? null,
+    });
   }
 
   async findAll(farmId: string): Promise<MeassuringHistorical[] | null> {
@@ -22,6 +34,8 @@ export class MeasuringHistoryService {
       where: {
         farmId,
       },
+      group: ['id', 'sensorId', 'value', 'deviceId', 'farmId'],
+      include: [Farm, Sensor, Device],
     });
   }
 

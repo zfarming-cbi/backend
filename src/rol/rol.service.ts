@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ROL_REPOSITORY } from 'src/database/constants';
-import { Rol } from 'src/database/entities';
+import { Rol, User } from 'src/database/entities';
 
 @Injectable()
 export class RolService {
@@ -15,6 +15,14 @@ export class RolService {
       where: {
         code,
       },
+      include: [{ model: User, as: 'users' }],
+    });
+  }
+
+  async findAll(): Promise<Rol[] | null> {
+    console.log('Aqui esta el repo o la entity', this.rolRepository);
+    return this.rolRepository.findAll({
+      include: [{ model: User, as: 'users', attributes: ['firstname'] }],
     });
   }
 }

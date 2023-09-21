@@ -19,7 +19,6 @@ import {
   SignupDTO,
 } from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ROLES } from './constants';
 import { RolService } from 'src/rol/rol.service';
 
 @ApiTags('auth')
@@ -72,9 +71,9 @@ export class AuthController {
 
   @ApiBearerAuth()
   @Get('profile')
-  getProfile(@Request() req: any) {
-    const rol = this.rolService.findOne(ROLES.ADMIN);
-    console.log('**** Aqui esta el rol', rol);
+  async getProfile(@Request() req: any) {
+    // const rol = await this.rolService.findAll();
+    // console.log('**** Aqui esta el rol', rol);
     return req.user;
   }
 }

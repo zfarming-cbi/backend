@@ -7,5 +7,5 @@ export class CompanyDTO {
     type: 'string',
     format: 'binary',
   })
-  logo: any;
+  logo?: any;
 }

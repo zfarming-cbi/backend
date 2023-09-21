@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { USER_REPOSITORY } from 'src/database/constants';
-import { Farm, Rol, User } from 'src/database/entities';
+import { User } from 'src/database/entities';
 import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
@@ -25,7 +25,6 @@ export class UsersService {
       companyId?: string;
     },
     tokenDecode?: any,
-    rol?: any,
   ): Promise<User> {
     const user = await this.findOne(args.email);
     if (user) throw new UnauthorizedException('El email ya esta en uso');
@@ -36,17 +35,13 @@ export class UsersService {
     if (tokenDecode) {
       companyId = tokenDecode.companyId;
     }
-    return await this.userRepository.create(
-      {
-        firstname: args.firstname,
-        lastname: args.lastname,
-        email: args.email,
-        password: args.password,
-        companyId: companyId,
-        rols: [rol],
-      },
-      { include: Rol },
-    );
+    return await this.userRepository.create({
+      firstname: args.firstname,
+      lastname: args.lastname,
+      email: args.email,
+      password: args.password,
+      companyId: companyId,
+    });
   }
 
   async findOne(filter_: string): Promise<User | null> {
@@ -58,7 +53,6 @@ export class UsersService {
           { id: filter_ },
         ],
       },
-      include: [Rol, Farm],
     });
   }
 

@@ -6,10 +6,9 @@ import {
   ForeignKey,
   BelongsTo,
   HasMany,
-  BelongsToMany,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
-import { Company, Farm, UserFarm, UserRol } from './';
+import { Company } from './';
 import { PlantGaleryLikes } from './plantGaleryLikes.entity';
 import { PlantGaleryComments } from './plantGaleryComments.entity';
 
@@ -63,9 +62,9 @@ export class User extends Model {
   @HasMany(() => PlantGaleryComments)
   comments_to_plants_galery: PlantGaleryComments[];
 
-  @BelongsToMany(() => Farm, () => UserFarm)
-  farms: Farm[];
+  // @BelongsToMany(() => Farm, () => UserFarm)
+  // farms: Farm[];
 
-  @HasMany(() => UserRol)
-  rols: UserRol[];
+  // @BelongsToMany(() => Rol, { through: 'UserRols' })
+  // rols: Rol[];
 }

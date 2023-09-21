@@ -24,13 +24,14 @@ export class CompanyService {
   }
 
   async update(
-    id: string,
     args: {
       name?: string;
       nit?: string;
       logo?: string;
     },
+    decodeToken?: any,
   ): Promise<Company | null> {
+    const id = decodeToken.companyId;
     await this.companyRepository.update(args, {
       where: {
         id,

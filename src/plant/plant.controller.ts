@@ -67,7 +67,7 @@ export class PlantController {
   ) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    plantDto.image = image.path;
+    plantDto.image = image ? image.path : null;
     return this.plantService.create(plantDto, decodeToken);
   }
 

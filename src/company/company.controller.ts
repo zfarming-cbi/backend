@@ -4,7 +4,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
   Patch,
   Request,
   UploadedFile,
@@ -27,7 +26,7 @@ export class CompanyController {
     private jwtService: JwtService,
   ) {}
 
-  @Patch(':id')
+  @Patch('/')
   @UseInterceptors(
     FileInterceptor('logo', {
       storage: diskStorage({
@@ -42,12 +41,14 @@ export class CompanyController {
   })
   @HttpCode(HttpStatus.OK)
   updateCompany(
-    @Param('id') id: string,
     @Body() companyDto: CompanyDTO,
     @UploadedFile() logo: Express.Multer.File,
+    @Request() req: any,
   ) {
-    companyDto.logo = logo.path;
-    return this.companyService.update(id, companyDto);
+    companyDto.logo = logo?.path;
+    const token = req.headers.authorization.split(' ')[1];
+    const decodeToken = this.jwtService.decode(token);
+    return this.companyService.update(companyDto, decodeToken);
   }
 
   @Get('/')

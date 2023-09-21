@@ -10,4 +10,3 @@ export * from './user.entity';
 export * from './repository.providers';
 export * from './rol.entity';
 export * from './userFarm.entity';
-export * from './userRol.entity';

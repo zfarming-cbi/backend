@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { MeasuringHistoryService } from './measuringHistory.service';
-import { MeasuringHistoryDTO } from './dto/measuringHistory.dt.';
+import { MeasuringHistoryDTO } from './dto/measuringHistory.dto';
 
 @ApiTags('measuring-history')
 @ApiBearerAuth()
