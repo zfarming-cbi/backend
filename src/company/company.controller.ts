@@ -1,21 +1,25 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
-  Request,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { CompanyDTO } from './dto/company.dto';
+import { UpdateCompanyDTO } from './dto/company.dto';
 import { CompanyService } from './company.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { destination, renameImage } from 'src/helpers/images/images.helpers';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
+import * as fs from 'fs';
 
 @ApiTags('company')
 @ApiBearerAuth()
@@ -26,7 +30,7 @@ export class CompanyController {
     private jwtService: JwtService,
   ) {}
 
-  @Patch('/')
+  @Patch(':companyId')
   @UseInterceptors(
     FileInterceptor('logo', {
       storage: diskStorage({
@@ -37,25 +41,49 @@ export class CompanyController {
   )
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    type: CompanyDTO,
+    type: UpdateCompanyDTO,
   })
   @HttpCode(HttpStatus.OK)
-  updateCompany(
-    @Body() companyDto: CompanyDTO,
+  async updateCompany(
+    @Body() companyDto: UpdateCompanyDTO,
     @UploadedFile() logo: Express.Multer.File,
-    @Request() req: any,
+    @Param('companyId') companyId: string,
   ) {
-    companyDto.logo = logo?.path;
-    const token = req.headers.authorization.split(' ')[1];
-    const decodeToken = this.jwtService.decode(token);
-    return this.companyService.update(companyDto, decodeToken);
+    const validFields: Partial<UpdateCompanyDTO> = {};
+    if (companyDto.name) validFields.name = companyDto.name;
+    if (companyDto.nit) validFields.nit = companyDto.nit;
+    const company = await this.companyService.findOne(companyId);
+    const tempLogoPath = logo ? logo.path : null;
+    if (tempLogoPath) {
+      const finalImagePath = `uploads/company/${companyId}`;
+      if (!fs.existsSync(finalImagePath)) {
+        fs.mkdirSync(finalImagePath, { recursive: true });
+      }
+      if (company?.logo && fs.existsSync(company.logo)) {
+        fs.unlink(company.logo ?? '', (error) => {
+          if (error) {
+            throw new BadRequestException(`Error al borrar ${company?.logo}:`);
+          }
+        });
+      }
+      fs.renameSync(tempLogoPath, `${finalImagePath}/${logo.originalname}`);
+      validFields.logo = `${finalImagePath}/${logo.originalname}`;
+    }
+    return this.companyService.update(validFields, companyId);
   }
 
-  @Get('/')
+  @Get(':companyId')
   @HttpCode(HttpStatus.OK)
-  getCompany(@Request() req: any) {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodeToken = this.jwtService.decode(token);
-    return this.companyService.findOne(decodeToken);
+  getCompany(@Param('companyId') companyId: string) {
+    return this.companyService.findOne(companyId);
+  }
+
+  @Get('/logo/:logo')
+  @HttpCode(HttpStatus.OK)
+  getImage(@Param('logo') logo: string, @Res() res: Response) {
+    if (!fs.existsSync(logo)) {
+      return res.status(404).send('Imagen no encontrada');
+    }
+    res.sendFile(logo, { root: './' });
   }
 }

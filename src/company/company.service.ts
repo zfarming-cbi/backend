@@ -14,12 +14,9 @@ export class CompanyService {
     return await this.companyRepository.create({ name, nit });
   }
 
-  async findOne(search: any): Promise<Company | null> {
-    const value = search.nit ? search.nit : search.companyId;
+  async findOne(value: string): Promise<Company | null> {
     return this.companyRepository.findOne({
-      where: {
-        [Op.or]: [{ nit: value }, { id: value }],
-      },
+      where: { [Op.or]: [{ nit: value }, { id: value }] },
     });
   }
 
@@ -29,9 +26,8 @@ export class CompanyService {
       nit?: string;
       logo?: string;
     },
-    decodeToken?: any,
+    id?: string,
   ): Promise<Company | null> {
-    const id = decodeToken.companyId;
     await this.companyRepository.update(args, {
       where: {
         id,

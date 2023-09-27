@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -10,17 +11,20 @@ import {
   Post,
   Query,
   Request,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { PlantService } from './plant.service';
-import { PaginationPlantDTO, PlantDTO } from './dto/plant.dto';
+import { PaginationPlantDTO, PlantDTO, UpdatePlantDTO } from './dto/plant.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { destination, renameImage } from 'src/helpers/images/images.helpers';
 import { Public } from 'src/auth/decorators/isPublic';
+import * as fs from 'fs';
+import { Response } from 'express';
 
 @ApiTags('plant')
 @Controller('plants')
@@ -60,15 +64,26 @@ export class PlantController {
     type: PlantDTO,
   })
   @HttpCode(HttpStatus.OK)
-  createPlant(
+  async createPlant(
     @Body() plantDto: PlantDTO,
     @Request() req: any,
     @UploadedFile() image: Express.Multer.File,
   ) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    plantDto.image = image ? image.path : null;
-    return this.plantService.create(plantDto, decodeToken);
+    const tempImagePath = image ? image.path : null;
+    const plant = await this.plantService.create(plantDto, decodeToken);
+    if (tempImagePath) {
+      const finalImagePath = `uploads/plants/${plant.id}`;
+      if (!fs.existsSync(finalImagePath)) {
+        fs.mkdirSync(finalImagePath, { recursive: true });
+      }
+      fs.renameSync(tempImagePath, `${finalImagePath}/${image.originalname}`);
+      await this.plantService.update(plant.id, {
+        image: `${finalImagePath}/${image.originalname}`,
+      });
+    }
+    return plant;
   }
 
   @Patch(':id')
@@ -82,17 +97,45 @@ export class PlantController {
     }),
   )
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    type: PlantDTO,
-  })
   @HttpCode(HttpStatus.OK)
-  updatePlant(
+  async updatePlant(
     @Param('id') id: string,
-    @Body() plantDto: PlantDTO,
+    @Body() plantDto: UpdatePlantDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    plantDto.image = image.path;
-    return this.plantService.update(id, plantDto);
+    const validFields: Partial<UpdatePlantDTO> = {};
+    if (plantDto.name) validFields.name = plantDto.name;
+    if (plantDto.content) validFields.content = plantDto.content;
+    if (plantDto.public) validFields.public = plantDto.public;
+    if (plantDto.growing_time) validFields.growing_time = plantDto.growing_time;
+    const tempImagePath = image ? image.path : null;
+    const plant = await this.plantService.findOne(id);
+    if (tempImagePath) {
+      const finalImagePath = `uploads/plants/${id}`;
+      if (!fs.existsSync(finalImagePath)) {
+        fs.mkdirSync(finalImagePath, { recursive: true });
+      }
+      if (plant?.image && fs.existsSync(plant.image)) {
+        fs.unlink(plant.image ?? '', (error) => {
+          if (error) {
+            throw new BadRequestException(`Error al borrar ${plant?.image}:`);
+          }
+        });
+      }
+      fs.renameSync(tempImagePath, `${finalImagePath}/${image.originalname}`);
+      validFields.image = `${finalImagePath}/${image.originalname}`;
+    }
+    return this.plantService.update(id, validFields);
+  }
+
+  @Get(':image')
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  getImage(@Param('image') image: string, @Res() res: Response) {
+    if (!fs.existsSync(image)) {
+      return res.status(404).send('Imagen no encontrada');
+    }
+    res.sendFile(image, { root: './' });
   }
 
   @Delete(':id')

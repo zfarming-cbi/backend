@@ -28,10 +28,10 @@ export class PlantService {
     return await this.plantRepository.create(args);
   }
 
-  async findOne(name: string): Promise<Plant | null> {
+  async findOne(id: string): Promise<Plant | null> {
     return this.plantRepository.findOne({
       where: {
-        name,
+        id,
       },
     });
   }

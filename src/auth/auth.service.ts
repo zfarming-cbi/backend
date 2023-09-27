@@ -26,7 +26,7 @@ export class AuthService {
     company: string;
     nit: string;
   }): Promise<any> {
-    const company = await this.companyService.findOne(args);
+    const company = await this.companyService.findOne(args.nit);
     if (company) throw new UnauthorizedException('El nit ya esta en uso');
     const new_company = await this.companyService.create(
       args.company,

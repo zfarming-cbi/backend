@@ -1,8 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CompanyDTO {
-  name: string;
-  nit: string;
+export class UpdateCompanyDTO {
+  @ApiPropertyOptional()
+  name?: string;
+  @ApiPropertyOptional()
+  nit?: string;
   @ApiProperty({
     type: 'string',
     format: 'binary',
