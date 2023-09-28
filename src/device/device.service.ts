@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DEVICE_REPOSITORY } from 'src/database/constants';
-import { Device } from 'src/database/entities';
+import { Device, MeassuringHistorical, Plant } from 'src/database/entities';
 
 @Injectable()
 export class DeviceService {
@@ -30,6 +30,16 @@ export class DeviceService {
     });
   }
 
+  async findAllUnasigned(tokenDecode?: any): Promise<Device[] | null> {
+    const companyId = tokenDecode.companyId;
+    return this.deviceRepository.findAll({
+      where: {
+        companyId: companyId,
+        farmId: null,
+      },
+    });
+  }
+
   async findAll(farmId?: string, tokenDecode?: any): Promise<Device[] | null> {
     const companyId = tokenDecode.companyId;
     const builtFilter: { companyId: string; farmId?: string } = {
@@ -40,6 +50,7 @@ export class DeviceService {
     }
     return this.deviceRepository.findAll({
       where: builtFilter,
+      include: [Plant, MeassuringHistorical],
     });
   }
 

@@ -20,6 +20,7 @@ import {
 } from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolService } from 'src/rol/rol.service';
+import { UsersService } from 'src/user/users.service';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -27,12 +28,13 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private rolService: RolService,
+    private userService: UsersService,
   ) {}
 
   @Public()
   @Post('signup')
   @HttpCode(HttpStatus.OK)
-  signUp(@Body() signupDto: SignupDTO) {
+  async signUp(@Body() signupDto: SignupDTO) {
     return this.authService.signup(signupDto);
   }
 
@@ -72,8 +74,10 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('profile')
   async getProfile(@Request() req: any) {
+    const user = await this.userService.findAll(1);
+    console.log('**** Aqui esta el user', user);
     // const rol = await this.rolService.findAll();
-    // console.log('**** Aqui esta el rol', rol);
+    // console.log(rol);
     return req.user;
   }
 }

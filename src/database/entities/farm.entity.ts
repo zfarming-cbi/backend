@@ -6,14 +6,11 @@ import {
   ForeignKey,
   BelongsTo,
   HasMany,
-  BelongsToMany,
 } from 'sequelize-typescript';
 
 import { Device } from './device.entity';
 import { Company } from './company.entity';
 import { MeassuringHistorical } from './measuringHistorical.entity';
-import { User } from './user.entity';
-import { UserFarm } from './userFarm.entity';
 
 @Table({
   timestamps: true,
@@ -53,7 +50,4 @@ export class Farm extends Model {
 
   @HasMany(() => MeassuringHistorical)
   measurings: MeassuringHistorical[];
-
-  @BelongsToMany(() => User, () => UserFarm)
-  users: User[];
 }

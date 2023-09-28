@@ -32,6 +32,12 @@ export class FarmController {
     return this.farmService.findAll(decodeToken);
   }
 
+  @Get(':farmId')
+  @HttpCode(HttpStatus.OK)
+  getFarm(@Param('farmId') farmId: string) {
+    return this.farmService.findOne(farmId);
+  }
+
   @Post('/')
   @HttpCode(HttpStatus.OK)
   createFarms(@Body() farmDto: FarmDTO, @Request() req: any) {

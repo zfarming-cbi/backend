@@ -22,7 +22,7 @@ export class RolService {
   async findAll(): Promise<Rol[] | null> {
     console.log('Aqui esta el repo o la entity', this.rolRepository);
     return this.rolRepository.findAll({
-      include: [{ model: User, as: 'users', attributes: ['firstname'] }],
+      include: [{ model: User, as: 'users' }],
     });
   }
 }

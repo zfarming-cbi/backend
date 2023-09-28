@@ -32,6 +32,14 @@ export class DeviceController {
     return this.deviceService.findAll(farmid, decodeToken);
   }
 
+  @Get('/unasigned')
+  @HttpCode(HttpStatus.OK)
+  getDevicesUnasigned(@Request() req: any) {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodeToken = this.jwtService.decode(token);
+    return this.deviceService.findAllUnasigned(decodeToken);
+  }
+
   @Post('/')
   @HttpCode(HttpStatus.OK)
   createDevice(@Body() deviceDto: DeviceDTO, @Request() req: any) {

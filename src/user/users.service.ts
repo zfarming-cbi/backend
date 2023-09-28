@@ -1,11 +1,6 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { USER_REPOSITORY } from 'src/database/constants';
-import { User } from 'src/database/entities';
+import { Farm, User } from 'src/database/entities';
 import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
@@ -56,13 +51,12 @@ export class UsersService {
     });
   }
 
-  async findAll(tokenDecode?: any): Promise<User[]> {
-    const companyId = tokenDecode.companyId;
-    Logger.log(companyId);
+  async findAll(companyId?: number): Promise<User[]> {
     return this.userRepository.findAll({
       where: {
         companyId,
       },
+      include: Farm,
     });
   }
 

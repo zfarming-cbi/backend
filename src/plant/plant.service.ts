@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PLANT_REPOSITORY } from 'src/database/constants';
 import {
+  Device,
   Plant,
   PlantGaleryComments,
   PlantGaleryLikes,
@@ -33,6 +34,7 @@ export class PlantService {
       where: {
         id,
       },
+      include: [PlantGaleryLikes, PlantGaleryComments],
     });
   }
 
@@ -51,6 +53,7 @@ export class PlantService {
       limit: perPage,
       offset: offset,
       where: { companyId },
+      include: Device,
     });
   }
 

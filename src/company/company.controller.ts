@@ -78,12 +78,13 @@ export class CompanyController {
     return this.companyService.findOne(companyId);
   }
 
-  @Get('/logo/:logo')
+  @Get('/logo/:companyId')
   @HttpCode(HttpStatus.OK)
-  getImage(@Param('logo') logo: string, @Res() res: Response) {
-    if (!fs.existsSync(logo)) {
+  async getImage(@Param('companyId') companyId: string, @Res() res: Response) {
+    const company = await this.companyService.findOne(companyId);
+    if (!fs.existsSync(company?.logo ?? '')) {
       return res.status(404).send('Imagen no encontrada');
     }
-    res.sendFile(logo, { root: './' });
+    res.sendFile(company?.logo ?? '', { root: './' });
   }
 }

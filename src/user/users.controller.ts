@@ -23,12 +23,10 @@ export class UsersController {
     private jwtService: JwtService,
   ) {}
 
-  @Get('/all')
+  @Get(':companyId')
   @HttpCode(HttpStatus.OK)
-  getUsers(@Request() req: any) {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodeToken = this.jwtService.decode(token);
-    return this.usersService.findAll(decodeToken);
+  getUsers(@Param('companyId') companyId: number) {
+    return this.usersService.findAll(companyId);
   }
 
   @Post('/')

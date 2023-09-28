@@ -8,7 +8,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
-import { Company } from './';
+import { Company, Rol } from './';
 import { PlantGaleryLikes } from './plantGaleryLikes.entity';
 import { PlantGaleryComments } from './plantGaleryComments.entity';
 
@@ -53,6 +53,10 @@ export class User extends Model {
   @Column
   companyId: number;
 
+  @ForeignKey(() => Rol)
+  @Column
+  rolId: number;
+
   @BelongsTo(() => Company, 'companyId')
   company: Company;
 
@@ -61,10 +65,4 @@ export class User extends Model {
 
   @HasMany(() => PlantGaleryComments)
   comments_to_plants_galery: PlantGaleryComments[];
-
-  // @BelongsToMany(() => Farm, () => UserFarm)
-  // farms: Farm[];
-
-  // @BelongsToMany(() => Rol, { through: 'UserRols' })
-  // rols: Rol[];
 }

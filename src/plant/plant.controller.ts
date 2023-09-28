@@ -36,6 +36,7 @@ export class PlantController {
 
   @Get('/')
   @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
   getPlants(@Request() req: any, @Query() pagination: PaginationPlantDTO) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
@@ -128,14 +129,22 @@ export class PlantController {
     return this.plantService.update(id, validFields);
   }
 
-  @Get(':image')
+  @Get('/image/:plantId')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  getImage(@Param('image') image: string, @Res() res: Response) {
-    if (!fs.existsSync(image)) {
+  async getImage(@Param('plantId') plantId: string, @Res() res: Response) {
+    const plant = await this.plantService.findOne(plantId);
+    if (!fs.existsSync(plant?.image ?? '')) {
       return res.status(404).send('Imagen no encontrada');
     }
-    res.sendFile(image, { root: './' });
+    res.sendFile(plant?.image ?? '', { root: './' });
+  }
+
+  @Get('/:plantId')
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async getPlant(@Param('plantId') plantId: string) {
+    return await this.plantService.findOne(plantId);
   }
 
   @Delete(':id')
