@@ -8,9 +8,10 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
-import { Company, Rol } from './';
+import { Company } from './';
 import { PlantGaleryLikes } from './plantGaleryLikes.entity';
 import { PlantGaleryComments } from './plantGaleryComments.entity';
+import { Pqrs } from './pqrs.entity';
 
 @Table({
   timestamps: true,
@@ -53,15 +54,14 @@ export class User extends Model {
   @Column
   companyId: number;
 
-  @ForeignKey(() => Rol)
-  @Column
-  rolId: number;
-
   @BelongsTo(() => Company, 'companyId')
   company: Company;
 
   @HasMany(() => PlantGaleryLikes)
   likes_to_plants_galery: PlantGaleryLikes[];
+
+  @HasMany(() => Pqrs)
+  tickets: Pqrs[];
 
   @HasMany(() => PlantGaleryComments)
   comments_to_plants_galery: PlantGaleryComments[];

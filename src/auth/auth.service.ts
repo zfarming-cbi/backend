@@ -2,8 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CompanyService } from 'src/company/company.service';
+import { GroupService } from 'src/group/group.service';
 import { MailService } from 'src/mail/mail.service';
-import { RolService } from 'src/rol/rol.service';
 import { UsersService } from 'src/user/users.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,7 +15,7 @@ export class AuthService {
     private jwtService: JwtService,
     private mailService: MailService,
     private configService: ConfigService,
-    private rolService: RolService,
+    private groupService: GroupService,
   ) {}
 
   async signup(args: {
@@ -32,8 +32,6 @@ export class AuthService {
       args.company,
       args.nit,
     );
-    // const rol = await this.rolService.findOne(ROLES.ADMIN);
-    // console.log('**** Aqui esta el rol', rol);
     const user = await this.usersService.create({
       firstname: args.firstname,
       lastname: args.lastname,
@@ -44,7 +42,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      companyid: user.companyId,
+      companyId: user.companyId,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),

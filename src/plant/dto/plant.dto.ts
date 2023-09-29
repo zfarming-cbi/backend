@@ -12,11 +12,6 @@ export class PlantDTO {
   image: any;
 }
 
-export class PaginationPlantDTO {
-  page: string = '1';
-  perPage: string = '5';
-}
-
 export class UpdatePlantDTO {
   @ApiPropertyOptional()
   name?: string;

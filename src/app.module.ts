@@ -11,7 +11,7 @@ import { PlantModule } from './plant/plant.module';
 import { SensorModule } from './sensor/sensor.module';
 import { MeasuringHistoryModule } from './measuringHistory/measuringHistory.module';
 import { MailModule } from './mail/mail.module';
-import { RolModule } from './rol/rol.module';
+import { GroupModule } from './group/group.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { PlantGaleryCommentModule } from './plantGaleryComment/plantGaleryComment.module';
 import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module';
@@ -24,7 +24,7 @@ import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module
       load: [configuration],
     }),
     MulterModule.register({
-      dest: './uploads', // Directorio de almacenamiento para los archivos cargados.
+      dest: './images',
     }),
     DatabaseModule,
     AuthModule,
@@ -36,7 +36,7 @@ import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module
     SensorModule,
     MailModule,
     MeasuringHistoryModule,
-    RolModule,
+    GroupModule,
     PlantGaleryCommentModule,
     PlantGaleryLikeModule,
   ],

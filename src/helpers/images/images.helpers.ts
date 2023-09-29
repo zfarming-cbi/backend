@@ -6,7 +6,7 @@ export const renameImage = (req: any, file: any, cb: any) => {
 };
 
 export const destination = (req: any, file: any, cb: any) => {
-  const uploadPath = './uploads/temp';
+  const uploadPath = './images/temp';
   if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });
   }

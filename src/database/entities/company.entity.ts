@@ -3,6 +3,7 @@ import { User } from './user.entity';
 import { Device } from './device.entity';
 import { Farm } from './farm.entity';
 import { Plant } from './plant.entity';
+import { Pqrs } from './pqrs.entity';
 
 @Table
 export class Company extends Model {
@@ -35,4 +36,7 @@ export class Company extends Model {
 
   @HasMany(() => Device)
   devices: Device[];
+
+  @HasMany(() => Pqrs)
+  tickets: Pqrs[];
 }

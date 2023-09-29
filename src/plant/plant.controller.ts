@@ -18,13 +18,14 @@ import {
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { PlantService } from './plant.service';
-import { PaginationPlantDTO, PlantDTO, UpdatePlantDTO } from './dto/plant.dto';
+import { PlantDTO, UpdatePlantDTO } from './dto/plant.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { destination, renameImage } from 'src/helpers/images/images.helpers';
 import { Public } from 'src/auth/decorators/isPublic';
 import * as fs from 'fs';
 import { Response } from 'express';
+import { PaginationDTO } from 'src/pagination/dto/pagination.dto';
 
 @ApiTags('plant')
 @Controller('plants')
@@ -37,7 +38,7 @@ export class PlantController {
   @Get('/')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
-  getPlants(@Request() req: any, @Query() pagination: PaginationPlantDTO) {
+  getPlants(@Request() req: any, @Query() pagination: PaginationDTO) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
     return this.plantService.findAll(pagination, decodeToken);
@@ -46,7 +47,7 @@ export class PlantController {
   @Public()
   @Get('/galery')
   @HttpCode(HttpStatus.OK)
-  getAllPlants(@Query() pagination: PaginationPlantDTO) {
+  getAllPlants(@Query() pagination: PaginationDTO) {
     return this.plantService.findAllForGalery(pagination);
   }
 
@@ -75,7 +76,7 @@ export class PlantController {
     const tempImagePath = image ? image.path : null;
     const plant = await this.plantService.create(plantDto, decodeToken);
     if (tempImagePath) {
-      const finalImagePath = `uploads/plants/${plant.id}`;
+      const finalImagePath = `images/plants/${plant.id}`;
       if (!fs.existsSync(finalImagePath)) {
         fs.mkdirSync(finalImagePath, { recursive: true });
       }

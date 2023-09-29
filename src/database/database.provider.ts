@@ -3,11 +3,12 @@ import {
   Company,
   Device,
   Farm,
+  Group,
   MeassuringHistorical,
   Plant,
   PlantGaleryComments,
   PlantGaleryLikes,
-  Rol,
+  Pqrs,
   Sensor,
   User,
 } from './entities';
@@ -39,10 +40,13 @@ export const databaseProviders = [
         Sensor,
         Farm,
         MeassuringHistorical,
-        Rol,
+        Group,
+        Pqrs,
       ]);
       User.belongsToMany(Farm, { through: 'UserFarm' });
       Farm.belongsToMany(User, { through: 'UserFarm' });
+      User.belongsToMany(Group, { through: 'UserGroup' });
+      Group.belongsToMany(User, { through: 'UserGroup' });
       await sequelize.sync();
       return sequelize;
     },

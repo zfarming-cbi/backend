@@ -1,6 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { USER_REPOSITORY } from 'src/database/constants';
-import { Farm, User } from 'src/database/entities';
+import { Farm, Group, User } from 'src/database/entities';
 import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
@@ -56,7 +56,7 @@ export class UsersService {
       where: {
         companyId,
       },
-      include: Farm,
+      include: [Farm, Group],
     });
   }
 

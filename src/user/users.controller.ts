@@ -23,7 +23,7 @@ export class UsersController {
     private jwtService: JwtService,
   ) {}
 
-  @Get(':companyId')
+  @Get('/company/:companyId')
   @HttpCode(HttpStatus.OK)
   getUsers(@Param('companyId') companyId: number) {
     return this.usersService.findAll(companyId);
@@ -40,6 +40,7 @@ export class UsersController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   getUser(@Param('id') id: string) {
+    console.log('si esta entrando aqui ');
     return this.usersService.findOne(id);
   }
 

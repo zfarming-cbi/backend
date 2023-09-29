@@ -8,14 +8,14 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { CompanyModule } from 'src/company/company.module';
 import { MailModule } from 'src/mail/mail.module';
-import { RolModule } from 'src/rol/rol.module';
+import { GroupModule } from 'src/group/group.module';
 
 @Module({
   imports: [
     UsersModule,
     CompanyModule,
     MailModule,
-    RolModule,
+    GroupModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,

@@ -19,15 +19,15 @@ import {
   SignupDTO,
 } from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RolService } from 'src/rol/rol.service';
 import { UsersService } from 'src/user/users.service';
+import { GroupService } from 'src/group/group.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private rolService: RolService,
+    private groupService: GroupService,
     private userService: UsersService,
   ) {}
 
