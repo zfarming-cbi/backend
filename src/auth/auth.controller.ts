@@ -7,7 +7,6 @@ import {
   Param,
   Patch,
   Post,
-  Redirect,
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -54,7 +53,6 @@ export class AuthController {
 
   @Public()
   @Get('recover-password-screen/:uuid')
-  @Redirect()
   @HttpCode(HttpStatus.OK)
   recoverPasswordScreen(@Param('uuid') uuid: string) {
     return this.authService.recoverPasswordScreen(uuid);
@@ -62,7 +60,6 @@ export class AuthController {
 
   @Public()
   @Patch('recover-password/:uuid')
-  @Redirect()
   @HttpCode(HttpStatus.OK)
   recoverPassword(
     @Param('uuid') uuid: string,

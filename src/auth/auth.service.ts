@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CompanyService } from 'src/company/company.service';
+import { User } from 'src/database/entities';
 import { GroupService } from 'src/group/group.service';
 import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/user/users.service';
@@ -77,9 +78,10 @@ export class AuthService {
     const user = await this.usersService.findOne(email);
     if (!user) throw new UnauthorizedException();
     const uuid = uuidv4();
-    const url = `${this.configService.get(
-      'urls.link_recover_password',
-    )}/${uuid}`;
+    const url = `http://localhost:5173/recover-password/${uuid}`;
+    // const url = `${this.configService.get(
+    //   'urls.link_recover_password',
+    // )}/${uuid}`;
     await this.mailService.sendMail(user, url, 'Restablece la contraseña');
     await this.usersService.update(user.id, { uuid_forgot: uuid });
     return { message: 'Se ha enviado un enlace para recuperar la contraseña' };
@@ -97,14 +99,20 @@ export class AuthService {
       uuid_forgot: '',
       password: recoverPassword.password,
     });
-    return { message: 'Cambio de contraseña exitoso' };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      companyId: user.companyId,
+    };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
-  async recoverPasswordScreen(uuid: string): Promise<object> {
+  async recoverPasswordScreen(uuid: string): Promise<User> {
     const user = await this.usersService.findOne(uuid);
+    console.log('llego hasta la busqueda del usuario', user);
     if (!user) throw new UnauthorizedException('El enlace ya expiro');
-    return {
-      url: `${this.configService.get('urls.view_recover_password')}/${uuid}`,
-    };
+    return user;
   }
 }

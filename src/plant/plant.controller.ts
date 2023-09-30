@@ -143,7 +143,6 @@ export class PlantController {
 
   @Public()
   @Get('/:plantId')
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   async getPlant(@Param('plantId') plantId: string) {
     return await this.plantService.findOne(plantId);
