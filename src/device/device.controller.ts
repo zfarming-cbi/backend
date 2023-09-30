@@ -32,6 +32,12 @@ export class DeviceController {
     return this.deviceService.findAll(farmid, decodeToken);
   }
 
+  @Get(':deviceId')
+  @HttpCode(HttpStatus.OK)
+  getDevice(@Param('deviceId') deviceId: string) {
+    return this.deviceService.findOne(deviceId);
+  }
+
   @Get('/unasigned')
   @HttpCode(HttpStatus.OK)
   getDevicesUnasigned(@Request() req: any) {

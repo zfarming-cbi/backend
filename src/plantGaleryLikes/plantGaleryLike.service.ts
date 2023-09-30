@@ -9,22 +9,29 @@ export class PlantGaleryLikeService {
     private plantGaleryLikeRepository: typeof PlantGaleryLikes,
   ) {}
   value: string;
-  async create(
-    args: {
-      like: number;
-      plantId: string;
-      userId?: string;
-    },
-    decodeToken?: any,
-  ): Promise<PlantGaleryLikes> {
-    const userId = decodeToken.sub;
-    args.userId = userId;
+  async create(args: {
+    like: number;
+    plantId: string;
+    userId?: string;
+  }): Promise<PlantGaleryLikes> {
     return await this.plantGaleryLikeRepository.create(args);
   }
 
   async findAll(userId: string): Promise<PlantGaleryLikes[] | null> {
     return this.plantGaleryLikeRepository.findAll({
       where: {
+        userId,
+      },
+    });
+  }
+
+  async findOne(
+    plantId: string,
+    userId: string,
+  ): Promise<PlantGaleryLikes | null> {
+    return this.plantGaleryLikeRepository.findOne({
+      where: {
+        plantId,
         userId,
       },
     });

@@ -7,16 +7,15 @@ import {
   Param,
   Patch,
   Post,
-  Request,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PlantGaleryLikeService } from './plantGaleryLike.service';
 import { PlantGaleryLikeDTO } from './dto/plantGaleryLike.dto';
 import { JwtService } from '@nestjs/jwt';
 
-@ApiTags('galery-likes')
+@ApiTags('likes-plant')
 @ApiBearerAuth()
-@Controller('galery-like')
+@Controller('like-plant')
 export class PlantGaleryLikeController {
   constructor(
     private plantGaleryLikeService: PlantGaleryLikeService,
@@ -29,15 +28,17 @@ export class PlantGaleryLikeController {
     return this.plantGaleryLikeService.findAll(plantId);
   }
 
+  @Get('/:plantId/:userId')
+  @HttpCode(HttpStatus.OK)
+  getLike(@Param('plantId') plantId: string, @Param('userId') userId: string) {
+    return this.plantGaleryLikeService.findOne(plantId, userId);
+  }
+
   @Post('/')
   @HttpCode(HttpStatus.OK)
-  createLike(
-    @Body() plantGaleryLikeDTO: PlantGaleryLikeDTO,
-    @Request() req: any,
-  ) {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodeToken = this.jwtService.decode(token);
-    return this.plantGaleryLikeService.create(plantGaleryLikeDTO, decodeToken);
+  createLike(@Body() plantGaleryLikeDTO: PlantGaleryLikeDTO) {
+    console.log('Se va a crear este like', plantGaleryLikeDTO);
+    return this.plantGaleryLikeService.create(plantGaleryLikeDTO);
   }
 
   @Patch(':id')

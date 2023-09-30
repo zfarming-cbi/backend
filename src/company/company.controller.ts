@@ -55,7 +55,7 @@ export class CompanyController {
     const company = await this.companyService.findOne(companyId);
     const tempLogoPath = logo ? logo.path : null;
     if (tempLogoPath) {
-      const finalImagePath = `uploads/company/${companyId}`;
+      const finalImagePath = `images/company/${companyId}`;
       if (!fs.existsSync(finalImagePath)) {
         fs.mkdirSync(finalImagePath, { recursive: true });
       }

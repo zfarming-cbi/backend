@@ -113,7 +113,7 @@ export class PlantController {
     const tempImagePath = image ? image.path : null;
     const plant = await this.plantService.findOne(id);
     if (tempImagePath) {
-      const finalImagePath = `uploads/plants/${id}`;
+      const finalImagePath = `images/plants/${id}`;
       if (!fs.existsSync(finalImagePath)) {
         fs.mkdirSync(finalImagePath, { recursive: true });
       }
@@ -141,6 +141,7 @@ export class PlantController {
     res.sendFile(plant?.image ?? '', { root: './' });
   }
 
+  @Public()
   @Get('/:plantId')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)

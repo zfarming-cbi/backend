@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DEVICE_REPOSITORY } from 'src/database/constants';
-import { Device, MeassuringHistorical, Plant } from 'src/database/entities';
+import {
+  Device,
+  Farm,
+  MeassuringHistorical,
+  Plant,
+} from 'src/database/entities';
 
 @Injectable()
 export class DeviceService {
@@ -22,11 +27,12 @@ export class DeviceService {
     return await this.deviceRepository.create(args);
   }
 
-  async findOne(code: string): Promise<Device | null> {
+  async findOne(id: string): Promise<Device | null> {
     return this.deviceRepository.findOne({
       where: {
-        code,
+        id,
       },
+      include: [Plant, Farm],
     });
   }
 

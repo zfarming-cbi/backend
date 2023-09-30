@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { GALERY_PLANTS_COMMENTS_REPOSITORY } from 'src/database/constants';
-import { PlantGaleryComments } from 'src/database/entities';
+import { PlantGaleryComments, User } from 'src/database/entities';
 
 @Injectable()
 export class PlantGaleryCommentService {
@@ -12,22 +12,25 @@ export class PlantGaleryCommentService {
   async create(
     args: {
       message: string;
-      date: string;
+      date?: string;
       plantId: string;
       userId?: number;
     },
     decodeToken?: any,
   ): Promise<PlantGaleryComments> {
     const userId = decodeToken.sub;
+    const currentDate = new Date();
     args.userId = userId;
+    args.date = currentDate.toISOString();
     return await this.plantGaleryCommentRepository.create(args);
   }
 
-  async findAll(farmId: string): Promise<PlantGaleryComments[] | null> {
+  async findAll(plantId: string): Promise<PlantGaleryComments[] | null> {
     return this.plantGaleryCommentRepository.findAll({
       where: {
-        farmId,
+        plantId,
       },
+      include: User,
     });
   }
 

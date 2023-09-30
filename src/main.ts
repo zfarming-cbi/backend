@@ -20,12 +20,7 @@ async function bootstrap() {
     .build();
   app.setGlobalPrefix(preffix);
   app.useGlobalPipes(new ValidationPipe());
-  // app.useStaticAssets(join(__dirname, '..'), {
-  //   redirect: false,
-  //   index: false,
-  //   prefix: 'uploads',
-  // });
-  app.use('/images', express.static(join(__dirname, '../uploads')));
+  app.use('/images', express.static(join(__dirname, '../images')));
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/docs', app, document);
   const configService = app.get(ConfigService);
