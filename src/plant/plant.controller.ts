@@ -11,7 +11,6 @@ import {
   Post,
   Query,
   Request,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,7 +23,6 @@ import { diskStorage } from 'multer';
 import { destination, renameImage } from 'src/helpers/images/images.helpers';
 import { Public } from 'src/auth/decorators/isPublic';
 import * as fs from 'fs';
-import { Response } from 'express';
 import { PaginationDTO } from 'src/pagination/dto/pagination.dto';
 
 @ApiTags('plant')
@@ -128,17 +126,6 @@ export class PlantController {
       validFields.image = `${finalImagePath}/${image.originalname}`;
     }
     return this.plantService.update(id, validFields);
-  }
-
-  @Get('/image/:plantId')
-  @ApiBearerAuth()
-  @HttpCode(HttpStatus.OK)
-  async getImage(@Param('plantId') plantId: string, @Res() res: Response) {
-    const plant = await this.plantService.findOne(plantId);
-    if (!fs.existsSync(plant?.image ?? '')) {
-      return res.status(404).send('Imagen no encontrada');
-    }
-    res.sendFile(plant?.image ?? '', { root: './' });
   }
 
   @Public()

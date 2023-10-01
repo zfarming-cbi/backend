@@ -71,8 +71,8 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('profile')
   async getProfile(@Request() req: any) {
-    const user = await this.userService.findAll(1);
-    console.log('**** Aqui esta el user', user);
+    // const user = await this.userService.findAll(1);
+    // console.log('**** Aqui esta el user', user);
     // const rol = await this.rolService.findAll();
     // console.log(rol);
     return req.user;

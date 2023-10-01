@@ -5,17 +5,16 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
   Post,
   Request,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { PlantGaleryCommentService } from './plantGaleryComment.service';
 import { PlantGaleryCommentDTO } from './dto/plantGaleryComment.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Public } from 'src/auth/decorators/isPublic';
 
 @ApiTags('comments-plant')
-@ApiBearerAuth()
 @Controller('comment-plant')
 export class PlantGaleryCommentController {
   constructor(
@@ -23,6 +22,7 @@ export class PlantGaleryCommentController {
     private jwtService: JwtService,
   ) {}
 
+  @Public()
   @Get('/:plantId')
   @HttpCode(HttpStatus.OK)
   getComments(@Param('plantId') plantId: string) {
@@ -43,12 +43,12 @@ export class PlantGaleryCommentController {
     );
   }
 
-  @Patch(':id')
-  @HttpCode(HttpStatus.OK)
-  updateComment(
-    @Param('id') id: string,
-    @Body() plantGaleryCommentDTO: PlantGaleryCommentDTO,
-  ) {
-    return this.plantGaleryCommentService.update(id, plantGaleryCommentDTO);
-  }
+  // @Patch(':id') // toDO: ¿Se puede actualizar un comentario?
+  // @HttpCode(HttpStatus.OK)
+  // updateComment(
+  //   @Param('id') id: string,
+  //   @Body() plantGaleryCommentDTO: PlantGaleryCommentDTO,
+  // ) {
+  //   return this.plantGaleryCommentService.update(id, plantGaleryCommentDTO);
+  // }
 }

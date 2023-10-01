@@ -51,11 +51,38 @@ export class UsersService {
     });
   }
 
-  async findAll(companyId?: number): Promise<User[]> {
+  async findAll(
+    pagination: {
+      page: string;
+      perPage: string;
+      search: string;
+    },
+    companyId?: number,
+  ): Promise<User[]> {
+    const builtFilter = {
+      companyId,
+      [Op.or]: [
+        {
+          firstname: {
+            [Op.like]: `%${pagination.search ?? ''}%`,
+          },
+          lastname: {
+            [Op.like]: `%${pagination.search ?? ''}%`,
+          },
+          email: {
+            [Op.like]: `%${pagination.search ?? ''}%`,
+          },
+        },
+      ],
+    };
+    const page = parseInt(pagination.page);
+    const perPage = parseInt(pagination.perPage);
+    const offset = (page - 1) * perPage;
+
     return this.userRepository.findAll({
-      where: {
-        companyId,
-      },
+      limit: perPage,
+      offset: offset,
+      where: builtFilter,
       include: [Farm, Group],
     });
   }
@@ -81,7 +108,9 @@ export class UsersService {
         'Usuario en sesión, no se puede eliminar',
       );
     }
-    const users = await this.findAll();
+    const users = await this.userRepository.findAll({
+      where: { companyId: tokenDecode.companyId },
+    });
     if (users.length <= 1) {
       throw new UnauthorizedException('No se puede borrar el usuario');
     }

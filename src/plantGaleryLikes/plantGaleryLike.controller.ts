@@ -5,13 +5,13 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
   Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PlantGaleryLikeService } from './plantGaleryLike.service';
 import { PlantGaleryLikeDTO } from './dto/plantGaleryLike.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Public } from 'src/auth/decorators/isPublic';
 
 @ApiTags('likes-plant')
 @ApiBearerAuth()
@@ -22,12 +22,14 @@ export class PlantGaleryLikeController {
     private jwtService: JwtService,
   ) {}
 
+  @Public()
   @Get('/:plantId')
   @HttpCode(HttpStatus.OK)
   getLikes(@Param('plantId') plantId: string) {
     return this.plantGaleryLikeService.findAll(plantId);
   }
 
+  @Public()
   @Get('/:plantId/:userId')
   @HttpCode(HttpStatus.OK)
   getLike(@Param('plantId') plantId: string, @Param('userId') userId: string) {
@@ -41,12 +43,12 @@ export class PlantGaleryLikeController {
     return this.plantGaleryLikeService.create(plantGaleryLikeDTO);
   }
 
-  @Patch(':id')
-  @HttpCode(HttpStatus.OK)
-  updateLike(
-    @Param('id') id: string,
-    @Body() plantGaleryLikeDTO: PlantGaleryLikeDTO,
-  ) {
-    return this.plantGaleryLikeService.update(id, plantGaleryLikeDTO);
-  }
+  // @Patch(':id') // toDO: ¿Se puede actualizar un like?
+  // @HttpCode(HttpStatus.OK)
+  // updateLike(
+  //   @Param('id') id: string,
+  //   @Body() plantGaleryLikeDTO: PlantGaleryLikeDTO,
+  // ) {
+  //   return this.plantGaleryLikeService.update(id, plantGaleryLikeDTO);
+  // }
 }

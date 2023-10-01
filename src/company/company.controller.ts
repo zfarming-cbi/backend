@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,18 +16,13 @@ import { CompanyService } from './company.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { destination, renameImage } from 'src/helpers/images/images.helpers';
-import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
 import * as fs from 'fs';
 
 @ApiTags('company')
 @ApiBearerAuth()
 @Controller('company')
 export class CompanyController {
-  constructor(
-    private companyService: CompanyService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private companyService: CompanyService) {}
 
   @Patch(':companyId')
   @UseInterceptors(
@@ -76,15 +70,5 @@ export class CompanyController {
   @HttpCode(HttpStatus.OK)
   getCompany(@Param('companyId') companyId: string) {
     return this.companyService.findOne(companyId);
-  }
-
-  @Get('/logo/:companyId')
-  @HttpCode(HttpStatus.OK)
-  async getImage(@Param('companyId') companyId: string, @Res() res: Response) {
-    const company = await this.companyService.findOne(companyId);
-    if (!fs.existsSync(company?.logo ?? '')) {
-      return res.status(404).send('Imagen no encontrada');
-    }
-    res.sendFile(company?.logo ?? '', { root: './' });
   }
 }

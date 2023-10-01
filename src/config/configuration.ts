@@ -14,6 +14,5 @@ export default () => ({
   },
   urls: {
     link_recover_password: process.env.URL_RECOVER_PASSWORD,
-    view_recover_password: process.env.VIEW_RECOVER_PASSWORD,
   },
 });

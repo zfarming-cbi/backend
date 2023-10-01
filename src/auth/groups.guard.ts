@@ -1,15 +1,15 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from './decorators/roles';
 import { GROUPS } from './constants';
+import { GROUPS_KEY } from './decorators/groups';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class GroupsGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<GROUPS[]>(
-      ROLES_KEY,
+      GROUPS_KEY,
       [context.getHandler(), context.getClass()],
     );
     if (!requiredRoles) {

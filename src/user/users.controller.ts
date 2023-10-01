@@ -8,14 +8,17 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UserDTO } from 'src/user/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { PaginationDTO } from 'src/pagination/dto/pagination.dto';
 
 @ApiTags('users')
+@ApiBearerAuth()
 @Controller('user')
 export class UsersController {
   constructor(
@@ -25,8 +28,11 @@ export class UsersController {
 
   @Get('/company/:companyId')
   @HttpCode(HttpStatus.OK)
-  getUsers(@Param('companyId') companyId: number) {
-    return this.usersService.findAll(companyId);
+  getUsers(
+    @Param('companyId') companyId: number,
+    @Query() pagination: PaginationDTO,
+  ) {
+    return this.usersService.findAll(pagination, companyId);
   }
 
   @Post('/')
