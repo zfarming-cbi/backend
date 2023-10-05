@@ -52,7 +52,7 @@ export class PlantController {
   @Post('/')
   @ApiBearerAuth()
   @UseInterceptors(
-    FileInterceptor('image', {
+    FileInterceptor('files', {
       storage: diskStorage({
         destination: destination,
         filename: renameImage,

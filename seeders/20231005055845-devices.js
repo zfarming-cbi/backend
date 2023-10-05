@@ -11,7 +11,7 @@ module.exports = {
         companyId: 1,
         plantId: 1,
         description:
-          'El Controlador de Cultivo es un dispositivo electrónico que recopila datos de sensores de pH, conductividad eléctrica, temperatura del agua y oxígeno disuelto. Utiliza estos datos para controlar automáticamente la nutrición y el ambiente en un sistema hidropónico.',
+          'El Controlador de Cultivo es un dispositivo electrónico que recopila datos de sensores de pH, conductividad eléctrica, temperatura del agua y oxígeno disuelto.',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -22,7 +22,7 @@ module.exports = {
         companyId: 1,
         plantId: 1,
         description:
-          'El Controlador de Luz es un dispositivo que regula la iluminación en un invernadero hidropónico. Monitorea la intensidad de la luz y ajusta la duración y el espectro de las luces LED para optimizar el crecimiento de las plantas.',
+          'El Controlador de Luz es un dispositivo que regula la iluminación en un invernadero hidropónico.',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -33,7 +33,7 @@ module.exports = {
         companyId: 1,
         plantId: 1,
         description:
-          'Este sistema de riego automático está diseñado para distribuir la solución nutritiva de manera precisa en un cultivo hidropónico. Utiliza sensores de humedad del suelo y conductividad eléctrica del sustrato para determinar cuándo y cuánto regar.',
+          'Este sistema de riego automático está diseñado para distribuir la solución nutritiva de manera precisa en un cultivo hidropónico.',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -55,7 +55,7 @@ module.exports = {
         companyId: 1,
         plantId: 1,
         description:
-          'Este sistema permite el monitoreo y control a distancia de todos los sensores y dispositivos en un invernadero hidropónico. Proporciona datos en tiempo real y permite realizar ajustes desde una aplicación móvil.',
+          'Este sistema permite el monitoreo y control a distancia de todos los sensores y dispositivos en un invernadero hidropónico.',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -77,7 +77,7 @@ module.exports = {
         companyId: 1,
         plantId: 1,
         description:
-          'El Controlador de Nutrientes regula la concentración de la solución nutritiva en función de los datos de los sensores de conductividad eléctrica y pH. Asegura que las plantas reciban los nutrientes adecuados en todo momento.',
+          'El Controlador de Nutrientes regula la concentración de la solución nutritiva en función de los datos de los sensores de conductividad eléctrica y pH.',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -88,7 +88,7 @@ module.exports = {
         companyId: 1,
         plantId: 1,
         description:
-          'Este dispositivo controla las bombas de agua que distribuyen la solución nutritiva en el sistema hidropónico. Ajusta el flujo de agua según los datos de los sensores de humedad del suelo y conductividad eléctrica.',
+          'Este dispositivo controla las bombas de agua que distribuyen la solución nutritiva en el sistema hidropónico.',
         createdAt: new Date(),
         updatedAt: new Date(),
       },

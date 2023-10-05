@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MEASURING_HISTORY_REPOSITORY } from 'src/database/constants';
+// import { Sequelize } from 'sequelize';
+import {
+  DEVICE_REPOSITORY,
+  MEASURING_HISTORY_REPOSITORY,
+} from 'src/database/constants';
 import {
   Device,
   Farm,
@@ -12,6 +16,8 @@ export class MeasuringHistoryService {
   constructor(
     @Inject(MEASURING_HISTORY_REPOSITORY)
     private measuringHistoryRepository: typeof MeassuringHistorical,
+    @Inject(DEVICE_REPOSITORY)
+    private deviceRepository: typeof Device,
   ) {}
 
   async create(args: {
@@ -33,13 +39,28 @@ export class MeasuringHistoryService {
     );
   }
 
-  async findAll(farmId: string): Promise<MeassuringHistorical[] | null> {
-    return this.measuringHistoryRepository.findAll({
+  async findAll(deviceId: string): Promise<MeassuringHistorical[] | null> {
+    const device = await this.deviceRepository.findOne({
       where: {
-        farmId,
+        id: deviceId,
       },
-      group: ['id', 'sensorId', 'value', 'deviceId', 'farmId'],
+    });
+    // const device = await this.deviceService.findOne(deviceId);
+    const builtFilter: { deviceId: string; farmId?: number } = {
+      deviceId: deviceId,
+    };
+    if (device) {
+      builtFilter.farmId = device.farmId;
+    }
+    return this.measuringHistoryRepository.findAll({
+      // attributes: [
+      //   'sensorId',
+      //   [Sequelize.fn('array_agg', Sequelize.col('value')), 'values'],
+      // ],
+      where: builtFilter,
+      group: ['sensorId'],
       include: [Farm, Sensor, Device],
+      raw: true,
     });
   }
 

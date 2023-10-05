@@ -43,8 +43,6 @@ export class CompanyController {
     @UploadedFile() logo: Express.Multer.File,
     @Param('companyId') companyId: string,
   ) {
-    console.log('>>> logo desde el back', logo);
-    console.log('>>> logo desde el back JSON', JSON.stringify(logo));
     const validFields: Partial<UpdateCompanyDTO> = {};
     if (companyDto.name) validFields.name = companyDto.name;
     if (companyDto.nit) validFields.nit = companyDto.nit;

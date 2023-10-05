@@ -17,10 +17,10 @@ import { Public } from 'src/auth/decorators/isPublic';
 export class MeasuringHistoryController {
   constructor(private measuringService: MeasuringHistoryService) {}
 
-  @Get('/:farmId')
+  @Get('/:deviceId')
   @HttpCode(HttpStatus.OK)
-  getMeasurings(@Param('farmId') farmId: string) {
-    return this.measuringService.findAll(farmId);
+  getMeasurings(@Param('deviceId') deviceId: string) {
+    return this.measuringService.findAll(deviceId);
   }
 
   @Public()
