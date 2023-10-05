@@ -9,4 +9,5 @@ export class UserDTO {
   firstname: string;
   @IsNotEmpty()
   lastname: string;
+  rol: string;
 }

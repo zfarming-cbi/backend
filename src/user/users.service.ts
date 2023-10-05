@@ -1,6 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { USER_REPOSITORY } from 'src/database/constants';
-import { Farm, Group, User } from 'src/database/entities';
+import { Farm, User } from 'src/database/entities';
 import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
@@ -17,6 +17,7 @@ export class UsersService {
       lastname: string;
       email: string;
       password: string;
+      rol: string;
       companyId?: string;
     },
     tokenDecode?: any,
@@ -35,6 +36,7 @@ export class UsersService {
       lastname: args.lastname,
       email: args.email,
       password: args.password,
+      rol: args.rol,
       companyId: companyId,
     });
   }
@@ -83,7 +85,7 @@ export class UsersService {
       limit: perPage,
       offset: offset,
       where: builtFilter,
-      include: [Farm, Group],
+      include: Farm,
     });
   }
 

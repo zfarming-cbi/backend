@@ -11,7 +11,6 @@ import { PlantModule } from './plant/plant.module';
 import { SensorModule } from './sensor/sensor.module';
 import { MeasuringHistoryModule } from './measuringHistory/measuringHistory.module';
 import { MailModule } from './mail/mail.module';
-import { GroupModule } from './group/group.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { PlantGaleryCommentModule } from './plantGaleryComment/plantGaleryComment.module';
 import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module';
@@ -25,6 +24,7 @@ import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module
     }),
     MulterModule.register({
       dest: './images',
+      limits: { fileSize: 10 * 1024 * 1024 },
     }),
     DatabaseModule,
     AuthModule,
@@ -36,7 +36,6 @@ import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module
     SensorModule,
     MailModule,
     MeasuringHistoryModule,
-    GroupModule,
     PlantGaleryCommentModule,
     PlantGaleryLikeModule,
   ],

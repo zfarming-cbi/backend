@@ -41,6 +41,7 @@ export class FarmService {
       where: {
         companyId,
       },
+      order: [['end_crop_dt', 'DESC']],
       include: Device,
     });
   }

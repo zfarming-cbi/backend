@@ -37,6 +37,12 @@ export class User extends Model {
 
   @Column({
     type: DataType.STRING,
+    allowNull: false,
+  })
+  rol: string;
+
+  @Column({
+    type: DataType.STRING,
     allowNull: true,
   })
   uuid_forgot: string;

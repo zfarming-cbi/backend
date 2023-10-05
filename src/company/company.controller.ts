@@ -6,7 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
+  Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,9 +24,9 @@ import * as fs from 'fs';
 export class CompanyController {
   constructor(private companyService: CompanyService) {}
 
-  @Patch(':companyId')
+  @Post(':companyId')
   @UseInterceptors(
-    FileInterceptor('logo', {
+    FileInterceptor('files', {
       storage: diskStorage({
         destination: destination,
         filename: renameImage,
@@ -43,6 +43,8 @@ export class CompanyController {
     @UploadedFile() logo: Express.Multer.File,
     @Param('companyId') companyId: string,
   ) {
+    console.log('>>> logo desde el back', logo);
+    console.log('>>> logo desde el back JSON', JSON.stringify(logo));
     const validFields: Partial<UpdateCompanyDTO> = {};
     if (companyDto.name) validFields.name = companyDto.name;
     if (companyDto.nit) validFields.nit = companyDto.nit;

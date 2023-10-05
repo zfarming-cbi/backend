@@ -9,4 +9,3 @@ export * from './sensor.entity';
 export * from './user.entity';
 export * from './repository.providers';
 export * from './pqrs.entity';
-export * from './group.entity';

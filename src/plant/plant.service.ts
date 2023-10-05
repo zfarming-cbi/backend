@@ -67,6 +67,7 @@ export class PlantService {
     return this.plantRepository.findAll({
       limit: perPage,
       offset: offset,
+      where: { public: true },
       include: [PlantGaleryLikes, PlantGaleryComments],
     });
   }

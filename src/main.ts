@@ -21,6 +21,10 @@ async function bootstrap() {
   app.setGlobalPrefix(preffix);
   app.useGlobalPipes(new ValidationPipe());
   app.use('/images', express.static(join(__dirname, '../images')));
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
+  app.useBodyParser('urlencoded', { limit: '30mb' });
+  app.useBodyParser('json');
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/docs', app, document);
   const configService = app.get(ConfigService);

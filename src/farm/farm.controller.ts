@@ -26,10 +26,12 @@ export class FarmController {
 
   @Get('/')
   @HttpCode(HttpStatus.OK)
-  getFarms(@Request() req: any) {
+  async getFarms(@Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.farmService.findAll(decodeToken);
+    const farms = await this.farmService.findAll(decodeToken);
+    console.log('Granjas ordenadas', farms);
+    return farms;
   }
 
   @Get(':farmId')

@@ -3,10 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CompanyService } from 'src/company/company.service';
 import { User } from 'src/database/entities';
-import { GroupService } from 'src/group/group.service';
 import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/user/users.service';
 import { v4 as uuidv4 } from 'uuid';
+import { ROLES } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,6 @@ export class AuthService {
     private jwtService: JwtService,
     private mailService: MailService,
     private configService: ConfigService,
-    private groupService: GroupService,
   ) {}
 
   async signup(args: {
@@ -39,11 +38,13 @@ export class AuthService {
       email: args.email,
       password: args.password,
       companyId: new_company.id,
+      rol: ROLES.ADMIN,
     });
     const payload = {
       sub: user.id,
       email: user.email,
       companyId: user.companyId,
+      rol: user.rol,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -61,6 +62,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       companyId: user.companyId,
+      rol: user.rol,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -78,10 +80,9 @@ export class AuthService {
     const user = await this.usersService.findOne(email);
     if (!user) throw new UnauthorizedException();
     const uuid = uuidv4();
-    const url = `http://localhost:5173/recover-password/${uuid}`;
-    // const url = `${this.configService.get(
-    //   'urls.link_recover_password',
-    // )}/${uuid}`;
+    const url = `${this.configService.get(
+      'urls.link_recover_password',
+    )}/${uuid}`;
     await this.mailService.sendMail(user, url, 'Restablece la contraseña');
     await this.usersService.update(user.id, { uuid_forgot: uuid });
     return { message: 'Se ha enviado un enlace para recuperar la contraseña' };

@@ -29,6 +29,7 @@ export class DeviceController {
   getDevices(@Param('farmid') farmid: string, @Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
+    console.log('*****farmid', farmid);
     return this.deviceService.findAll(farmid, decodeToken);
   }
 
@@ -38,12 +39,13 @@ export class DeviceController {
     return this.deviceService.findOne(deviceId);
   }
 
-  @Get('/unasigned')
+  @Get('/')
   @HttpCode(HttpStatus.OK)
   getDevicesUnasigned(@Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.deviceService.findAllUnasigned(decodeToken);
+    const devices = this.deviceService.findAllUnasigned(decodeToken);
+    return devices;
   }
 
   @Post('/')

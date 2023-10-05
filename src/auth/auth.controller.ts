@@ -19,14 +19,13 @@ import {
 } from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from 'src/user/users.service';
-import { GroupService } from 'src/group/group.service';
+import { Roles } from './decorators/roles';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private groupService: GroupService,
     private userService: UsersService,
   ) {}
 
@@ -69,12 +68,18 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
+  @Roles('ADMIN')
   @Get('profile')
   async getProfile(@Request() req: any) {
-    // const user = await this.userService.findAll(1);
+    // const user = await this.userService.findAll(
+    //   {
+    //     page: '1',
+    //     perPage: '10',
+    //     search: '',
+    //   },
+    //   1,
+    // );
     // console.log('**** Aqui esta el user', user);
-    // const rol = await this.rolService.findAll();
-    // console.log(rol);
     return req.user;
   }
 }

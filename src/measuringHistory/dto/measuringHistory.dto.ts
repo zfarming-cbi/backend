@@ -1,5 +1,9 @@
-export class MeasuringHistoryDTO {
-  value: string;
+export class MeasuringDataDTO {
   sensorId: string;
+  value: string;
+}
+
+export class MeasuringHistoryDTO {
   deviceId: string;
+  data: MeasuringDataDTO[];
 }

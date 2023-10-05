@@ -13,20 +13,24 @@ export class MeasuringHistoryService {
     @Inject(MEASURING_HISTORY_REPOSITORY)
     private measuringHistoryRepository: typeof MeassuringHistorical,
   ) {}
-  value: string;
+
   async create(args: {
-    value: string;
-    sensorId: string;
+    data: { value: string; sensorId: string }[];
     deviceId: string;
     farmId?: string;
-  }): Promise<MeassuringHistorical> {
+  }): Promise<MeassuringHistorical[]> {
     const device = await Device.findOne({
       where: { id: args.deviceId },
     });
-    return await this.measuringHistoryRepository.create({
-      ...args,
+    const measuringHistoryItems = args.data.map((item) => ({
+      deviceId: args.deviceId,
       farmId: device?.farmId ?? null,
-    });
+      sensorId: item.sensorId,
+      value: item.value,
+    }));
+    return await this.measuringHistoryRepository.bulkCreate(
+      measuringHistoryItems,
+    );
   }
 
   async findAll(farmId: string): Promise<MeassuringHistorical[] | null> {
