@@ -13,9 +13,10 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { UserDTO } from 'src/user/dto/user.dto';
+import { UpdateUserDTO, UserDTO } from 'src/user/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { PaginationDTO } from 'src/pagination/dto/pagination.dto';
+import { Roles } from 'src/auth/decorators/roles';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -35,6 +36,7 @@ export class UsersController {
     return this.usersService.findAll(pagination, companyId);
   }
 
+  @Roles('ADMIN')
   @Post('/')
   @HttpCode(HttpStatus.OK)
   createUser(@Body() userDto: UserDTO, @Request() req: any) {
@@ -46,19 +48,21 @@ export class UsersController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   getUser(@Param('id') id: string) {
-    console.log('si esta entrando aqui ');
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  updateUser(@Param('id') id: string, @Body() userDto: UserDTO) {
+  updateUser(@Param('id') id: string, @Body() userDto: UpdateUserDTO) {
     return this.usersService.update(id, userDto);
   }
 
+  @Roles('ADMIN')
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  deleteUser(@Param('id') id: string) {
-    return this.usersService.delete(id);
+  deleteUser(@Param('id') id: string, @Request() req: any) {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = this.jwtService.decode(token);
+    return this.usersService.delete(id, decodedToken);
   }
 }

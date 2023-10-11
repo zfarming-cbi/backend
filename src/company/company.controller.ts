@@ -17,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { destination, renameImage } from 'src/helpers/images/images.helpers';
 import * as fs from 'fs';
+import { Roles } from 'src/auth/decorators/roles';
 
 @ApiTags('company')
 @ApiBearerAuth()
@@ -24,6 +25,7 @@ import * as fs from 'fs';
 export class CompanyController {
   constructor(private companyService: CompanyService) {}
 
+  @Roles('ADMIN')
   @Post(':companyId')
   @UseInterceptors(
     FileInterceptor('files', {

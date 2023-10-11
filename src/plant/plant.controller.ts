@@ -7,7 +7,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
   Post,
   Query,
   Request,
@@ -86,7 +85,7 @@ export class PlantController {
     return plant;
   }
 
-  @Patch(':id')
+  @Post(':id')
   @ApiBearerAuth()
   @UseInterceptors(
     FileInterceptor('image', {

@@ -54,7 +54,6 @@ export class DeviceService {
     if (farmId) {
       builtFilter.farmId = farmId;
     }
-    console.log('consultar todos', builtFilter);
     return this.deviceRepository.findAll({
       where: builtFilter,
       include: [Plant, MeassuringHistorical],
@@ -64,6 +63,9 @@ export class DeviceService {
   async update(
     id: string,
     args: {
+      name?: string;
+      description?: string;
+      code?: string;
       plantId?: string;
       farmId?: string;
     },

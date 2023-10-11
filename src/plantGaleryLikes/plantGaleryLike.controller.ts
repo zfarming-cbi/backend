@@ -39,7 +39,6 @@ export class PlantGaleryLikeController {
   @Post('/')
   @HttpCode(HttpStatus.OK)
   createLike(@Body() plantGaleryLikeDTO: PlantGaleryLikeDTO) {
-    console.log('Se va a crear este like', plantGaleryLikeDTO);
     return this.plantGaleryLikeService.create(plantGaleryLikeDTO);
   }
 

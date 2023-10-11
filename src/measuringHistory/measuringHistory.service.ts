@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
 // import { Sequelize } from 'sequelize';
 import {
   DEVICE_REPOSITORY,
@@ -28,12 +29,14 @@ export class MeasuringHistoryService {
     const device = await Device.findOne({
       where: { id: args.deviceId },
     });
+    if (!device) throw new BadRequestException('El dispositivo no existe');
     const measuringHistoryItems = args.data.map((item) => ({
       deviceId: args.deviceId,
       farmId: device?.farmId ?? null,
       sensorId: item.sensorId,
       value: item.value,
     }));
+    console.log('Measuring itmes', measuringHistoryItems);
     return await this.measuringHistoryRepository.bulkCreate(
       measuringHistoryItems,
     );
@@ -53,10 +56,10 @@ export class MeasuringHistoryService {
       builtFilter.farmId = device.farmId;
     }
     return this.measuringHistoryRepository.findAll({
-      // attributes: [
-      //   'sensorId',
-      //   [Sequelize.fn('array_agg', Sequelize.col('value')), 'values'],
-      // ],
+      attributes: [
+        'sensorId',
+        [Sequelize.fn('array_agg', Sequelize.col('value')), 'values'],
+      ],
       where: builtFilter,
       group: ['sensorId'],
       include: [Farm, Sensor, Device],

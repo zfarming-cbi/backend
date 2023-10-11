@@ -1,13 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  ForeignKey,
-} from 'sequelize-typescript';
-
-import { User } from './user.entity';
-import { Company } from './company.entity';
+import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
 @Table({
   timestamps: true,
@@ -36,12 +27,4 @@ export class Pqrs extends Model {
     allowNull: true,
   })
   phone: string;
-
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
-
-  @ForeignKey(() => Company)
-  @Column
-  companyId: number;
 }
