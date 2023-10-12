@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 // import { Sequelize } from 'sequelize';
 import {
@@ -22,7 +23,7 @@ export class MeasuringHistoryService {
   ) {}
 
   async create(args: {
-    data: { value: string; sensorId: string }[];
+    data: { value: string; code: string }[];
     deviceId: string;
     farmId?: string;
   }): Promise<MeassuringHistorical[]> {
@@ -30,41 +31,48 @@ export class MeasuringHistoryService {
       where: { id: args.deviceId },
     });
     if (!device) throw new BadRequestException('El dispositivo no existe');
+    const sensorCodes = args.data.map((item) => item.code);
+
+    const sensors = await Sensor.findAll({
+      where: {
+        code: {
+          [Op.in]: sensorCodes,
+        },
+      },
+    });
+
     const measuringHistoryItems = args.data.map((item) => ({
       deviceId: args.deviceId,
       farmId: device?.farmId ?? null,
-      sensorId: item.sensorId,
+      sensorId: sensors.find((sensor) => sensor.code === item.code)?.id,
       value: item.value,
     }));
-    console.log('Measuring itmes', measuringHistoryItems);
     return await this.measuringHistoryRepository.bulkCreate(
       measuringHistoryItems,
     );
   }
 
-  async findAll(deviceId: string): Promise<MeassuringHistorical[] | null> {
-    const device = await this.deviceRepository.findOne({
-      where: {
-        id: deviceId,
-      },
-    });
-    // const device = await this.deviceService.findOne(deviceId);
-    const builtFilter: { deviceId: string; farmId?: number } = {
-      deviceId: deviceId,
-    };
-    if (device) {
-      builtFilter.farmId = device.farmId;
-    }
-    return this.measuringHistoryRepository.findAll({
+  async findAll(deviceId: string): Promise<object[] | null> {
+    const results = await this.measuringHistoryRepository.findAll({
       attributes: [
         'sensorId',
-        [Sequelize.fn('array_agg', Sequelize.col('value')), 'values'],
+        [Sequelize.fn('GROUP_CONCAT', Sequelize.col('value')), 'value'],
       ],
-      where: builtFilter,
+      where: { deviceId: deviceId },
       group: ['sensorId'],
-      include: [Farm, Sensor, Device],
+      include: [
+        { model: Farm, attributes: [] },
+        { model: Sensor, attributes: [] },
+        { model: Device, attributes: [] },
+      ],
       raw: true,
     });
+    console.log('result', results);
+    const processedResults = results.map((result) => ({
+      sensorId: result.sensorId,
+      values: result.value.split(','),
+    }));
+    return processedResults;
   }
 
   async update(
@@ -79,14 +87,5 @@ export class MeasuringHistoryService {
       },
     });
     return this.measuringHistoryRepository.findOne({ where: { id } });
-  }
-
-  async delete(id: string): Promise<object> {
-    await this.measuringHistoryRepository.destroy({
-      where: {
-        id,
-      },
-    });
-    return { message: 'delete success' };
   }
 }

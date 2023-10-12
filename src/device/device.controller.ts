@@ -8,12 +8,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { DeviceService } from './device.service';
 import { DeviceDTO, UpdateDeviceDTO } from './dto/device.dto';
+import { PaginationDTO } from 'src/pagination/dto/pagination.dto';
 
 @ApiTags('device')
 @ApiBearerAuth()
@@ -24,12 +26,20 @@ export class DeviceController {
     private jwtService: JwtService,
   ) {}
 
-  @Get('/all/:farmid?')
+  @Get('/all')
   @HttpCode(HttpStatus.OK)
-  getDevices(@Param('farmid') farmid: string, @Request() req: any) {
+  getDevices(@Request() req: any, @Query() pagination: PaginationDTO) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.deviceService.findAll(farmid, decodeToken);
+    return this.deviceService.findAll(pagination, decodeToken);
+  }
+
+  @Get('/by-farm/:farmid')
+  @HttpCode(HttpStatus.OK)
+  getDevicesByFarm(@Param('farmid') farmId: string, @Request() req: any) {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodeToken = this.jwtService.decode(token);
+    return this.deviceService.findDeviceByFarm(farmId, decodeToken);
   }
 
   @Get(':deviceId')

@@ -4,6 +4,6 @@ import { repositoryProviders } from './entities/repository.providers';
 
 @Module({
   providers: [...databaseProviders, ...repositoryProviders],
-  exports: [...databaseProviders],
+  exports: [...databaseProviders, ...repositoryProviders],
 })
 export class DatabaseModule {}

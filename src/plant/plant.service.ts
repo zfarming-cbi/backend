@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { PLANT_REPOSITORY } from 'src/database/constants';
 import {
   Device,
@@ -42,17 +43,24 @@ export class PlantService {
     pagination: {
       page: string;
       perPage: string;
+      search: string;
     },
     tokenDecode?: any,
   ): Promise<Plant[] | null> {
+    const companyId = tokenDecode.companyId;
+    const builtFilter = {
+      companyId,
+      name: {
+        [Op.like]: `%${pagination.search ?? ''}%`,
+      },
+    };
     const page = parseInt(pagination.page);
     const perPage = parseInt(pagination.perPage);
     const offset = (page - 1) * perPage;
-    const companyId = tokenDecode.companyId;
     return this.plantRepository.findAll({
       limit: perPage,
       offset: offset,
-      where: { companyId },
+      where: builtFilter,
       include: Device,
     });
   }

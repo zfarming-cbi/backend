@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { DEVICE_REPOSITORY } from 'src/database/constants';
 import {
   Device,
@@ -46,14 +47,45 @@ export class DeviceService {
     });
   }
 
-  async findAll(farmId?: string, tokenDecode?: any): Promise<Device[] | null> {
+  async findAll(
+    pagination: {
+      page: string;
+      perPage: string;
+      search: string;
+    },
+    tokenDecode?: any,
+  ): Promise<Device[] | null> {
+    const companyId = tokenDecode.companyId;
+    const builtFilter = {
+      companyId: companyId,
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: `%${pagination.search ?? ''}%`,
+          },
+        },
+        {
+          code: {
+            [Op.like]: `%${pagination.search ?? ''}%`,
+          },
+        },
+      ],
+    };
+    return this.deviceRepository.findAll({
+      where: builtFilter,
+      include: [Plant, MeassuringHistorical],
+    });
+  }
+
+  async findDeviceByFarm(
+    farmId: string,
+    tokenDecode?: any,
+  ): Promise<Device[] | null> {
     const companyId = tokenDecode.companyId;
     const builtFilter: { companyId: string; farmId?: string } = {
       companyId: companyId,
+      farmId: farmId,
     };
-    if (farmId) {
-      builtFilter.farmId = farmId;
-    }
     return this.deviceRepository.findAll({
       where: builtFilter,
       include: [Plant, MeassuringHistorical],

@@ -17,14 +17,14 @@ export class Pqrs extends Model {
   description: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: true,
   })
-  document: string;
+  companyId: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: true,
   })
-  phone: string;
+  userId: number;
 }
