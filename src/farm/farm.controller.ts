@@ -30,7 +30,6 @@ export class FarmController {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
     const farms = await this.farmService.findAll(decodeToken);
-    console.log('Granjas ordenadas', farms);
     return farms;
   }
 

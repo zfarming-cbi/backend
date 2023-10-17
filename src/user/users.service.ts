@@ -68,15 +68,20 @@ export class UsersService {
           firstname: {
             [Op.like]: `%${pagination.search ?? ''}%`,
           },
+        },
+        {
           lastname: {
             [Op.like]: `%${pagination.search ?? ''}%`,
           },
+        },
+        {
           email: {
             [Op.like]: `%${pagination.search ?? ''}%`,
           },
         },
       ],
     };
+    console.log('search', builtFilter);
     const page = parseInt(pagination.page);
     const perPage = parseInt(pagination.perPage);
     const offset = (page - 1) * perPage;

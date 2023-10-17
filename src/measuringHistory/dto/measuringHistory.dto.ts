@@ -1,5 +1,5 @@
 export class MeasuringDataDTO {
-  sensorId: string;
+  code: string;
   value: string;
 }
 

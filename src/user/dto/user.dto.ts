@@ -11,3 +11,11 @@ export class UserDTO {
   lastname: string;
   rol: string;
 }
+
+export class UpdateUserDTO {
+  email?: string;
+  firstname?: string;
+  lastname?: string;
+  password?: string;
+  rol?: string;
+}

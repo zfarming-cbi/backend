@@ -12,6 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { Public } from './decorators/isPublic';
 import {
+  ChangePasswordDTO,
   ForgotPasswordDTO,
   LoginDTO,
   RecoverPasswordDTO,
@@ -19,7 +20,6 @@ import {
 } from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from 'src/user/users.service';
-import { Roles } from './decorators/roles';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -68,18 +68,17 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @Roles('ADMIN')
   @Get('profile')
   async getProfile(@Request() req: any) {
-    // const user = await this.userService.findAll(
-    //   {
-    //     page: '1',
-    //     perPage: '10',
-    //     search: '',
-    //   },
-    //   1,
-    // );
-    // console.log('**** Aqui esta el user', user);
     return req.user;
+  }
+
+  @Patch('change-password/:id')
+  @HttpCode(HttpStatus.OK)
+  changePassword(
+    @Param('id') id: string,
+    @Body() changePasswordDto: ChangePasswordDTO,
+  ) {
+    return this.authService.changePassword(id, changePasswordDto);
   }
 }

@@ -11,7 +11,6 @@ import * as bcrypt from 'bcrypt';
 import { Company } from './';
 import { PlantGaleryLikes } from './plantGaleryLikes.entity';
 import { PlantGaleryComments } from './plantGaleryComments.entity';
-import { Pqrs } from './pqrs.entity';
 
 @Table({
   timestamps: true,
@@ -65,9 +64,6 @@ export class User extends Model {
 
   @HasMany(() => PlantGaleryLikes)
   likes_to_plants_galery: PlantGaleryLikes[];
-
-  @HasMany(() => Pqrs)
-  tickets: Pqrs[];
 
   @HasMany(() => PlantGaleryComments)
   comments_to_plants_galery: PlantGaleryComments[];

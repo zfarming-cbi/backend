@@ -5,6 +5,9 @@ export class DeviceDTO {
 }
 
 export class UpdateDeviceDTO {
-  farmId: string;
-  plantId: string;
+  name?: string;
+  description?: string;
+  code?: string;
+  farmId?: string;
+  plantId?: string;
 }

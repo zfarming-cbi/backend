@@ -110,9 +110,28 @@ export class AuthService {
     };
   }
 
+  async changePassword(
+    id: string,
+    changePassword: {
+      currentPassword: string;
+      newPassword: string;
+    },
+  ): Promise<User> {
+    const user = await this.usersService.findOne(id);
+    if (!user) throw new UnauthorizedException();
+    if (
+      await this.validatePassword(changePassword.currentPassword, user.password)
+    ) {
+      throw new UnauthorizedException();
+    }
+    await this.usersService.update(user.id, {
+      password: changePassword.newPassword,
+    });
+    return user;
+  }
+
   async recoverPasswordScreen(uuid: string): Promise<User> {
     const user = await this.usersService.findOne(uuid);
-    console.log('llego hasta la busqueda del usuario', user);
     if (!user) throw new UnauthorizedException('El enlace ya expiro');
     return user;
   }

@@ -9,3 +9,10 @@ export class RecoverPasswordDTO {
   @IsString()
   password: string;
 }
+
+export class ChangePasswordDTO {
+  @IsString()
+  currentPassword: string;
+  @IsString()
+  newPassword: string;
+}
