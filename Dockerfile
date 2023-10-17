@@ -9,6 +9,7 @@ FROM node:18-alpine
 WORKDIR /home/app
 COPY --from=builder /home/app/dist /home/app/dist
 COPY --from=builder /home/app/package.json /home/app
+RUN ln -s $PWD/images/ $PWD/dist/images
 RUN yarn install --prod
 
 ENV PORT=80
