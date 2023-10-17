@@ -31,4 +31,4 @@ ENV VIEW_RECOVER_PASSWORD='https://zfarming.projects.kriverdevice.com/login'
 
 EXPOSE ${PORT}
 VOLUME ["/home/app"]
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "start:prod" ]
