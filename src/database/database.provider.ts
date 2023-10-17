@@ -21,9 +21,9 @@ export const databaseProviders = [
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => {
       const sequelize = new Sequelize({
-        port: 3306,
         dialect: 'mysql',
         timezone: '-05:00',
+        port: configService.get('database.port'),
         host: configService.get('database.host'),
         database: configService.get('database.name'),
         username: configService.get('database.user'),

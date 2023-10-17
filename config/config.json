@@ -4,6 +4,7 @@
     "password": "password",
     "database": "db",
     "host": "localhost",
+    "port": "3606",
     "dialect": "mysql"
   }
 }
