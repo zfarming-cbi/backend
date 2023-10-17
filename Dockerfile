@@ -9,6 +9,7 @@ FROM node:18-alpine
 WORKDIR /home/app
 COPY --from=builder /home/app/dist /home/app/dist
 COPY --from=builder /home/app/package.json /home/app
+COPY --from=builder /home/app/src/mail/templates /home/app/src/mail/templates
 RUN ln -s $PWD/images/ $PWD/dist/images
 RUN yarn install --prod
 
@@ -23,8 +24,8 @@ ENV DATABASE_PORT=''
 
 ENV SMTP_SERVER='smtp.gmail.com'
 ENV SMTP_PORT=465
-ENV MAIL_SENDER=''
-ENV MAIL_PASSWORD=''
+ENV MAIL_SENDER='zfarming.cbi@gmail.com'
+ENV MAIL_PASSWORD='mogv apfx zkbp kgjd'
 
 ENV URL_RECOVER_PASSWORD='https://zfarming-backend.projects.kriverdevice.com/api/v1/auth/recover-password'
 ENV VIEW_RECOVER_PASSWORD='https://zfarming.projects.kriverdevice.com/login'
