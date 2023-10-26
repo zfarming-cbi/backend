@@ -3,12 +3,14 @@ import { USER_REPOSITORY } from 'src/database/constants';
 import { Farm, User } from 'src/database/entities';
 import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
+import { FarmService } from 'src/farm/farm.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(USER_REPOSITORY)
     private userRepository: typeof User,
+    private farmService: FarmService,
   ) {}
 
   async create(
@@ -19,6 +21,7 @@ export class UsersService {
       password: string;
       rol: string;
       companyId?: string;
+      farmId?: string[];
     },
     tokenDecode?: any,
   ): Promise<User> {
@@ -31,7 +34,7 @@ export class UsersService {
     if (tokenDecode) {
       companyId = tokenDecode.companyId;
     }
-    return await this.userRepository.create({
+    const newUser = await this.userRepository.create({
       firstname: args.firstname,
       lastname: args.lastname,
       email: args.email,
@@ -39,6 +42,14 @@ export class UsersService {
       rol: args.rol,
       companyId: companyId,
     });
+    if (args.farmId) {
+      args.farmId.forEach(async (farmId) => {
+        const farm = (await this.farmService.findOne(farmId)) ?? '';
+        await newUser.$add('farms', farm);
+      });
+      await newUser.save();
+    }
+    return newUser;
   }
 
   async findOne(filter_: string): Promise<User | null> {
@@ -50,6 +61,14 @@ export class UsersService {
           { id: filter_ },
         ],
       },
+    });
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return this.userRepository.findOne({
+      attributes: { exclude: ['password'] },
+      where: { id },
+      include: Farm,
     });
   }
 
@@ -81,7 +100,6 @@ export class UsersService {
         },
       ],
     };
-    console.log('search', builtFilter);
     const page = parseInt(pagination.page);
     const perPage = parseInt(pagination.perPage);
     const offset = (page - 1) * perPage;
@@ -102,10 +120,19 @@ export class UsersService {
       lastname?: string;
       password?: string;
       uuid_forgot?: string;
+      farmId?: string[];
     },
   ): Promise<User | null> {
     await this.userRepository.update(args, { where: { id } });
-    return this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (args.farmId && user) {
+      args.farmId.forEach(async (farmId) => {
+        const farm = (await this.farmService.findOne(farmId)) ?? '';
+        await user.$add('farms', farm);
+      });
+      await user.save();
+    }
+    return user;
   }
 
   async delete(id: string, tokenDecode?: any): Promise<object> {

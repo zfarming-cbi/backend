@@ -5,6 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.bulkInsert('Plants', [
       {
+        id: 1,
         name: 'Tomate Cherry',
         growing_time: '2023-01-10',
         content:

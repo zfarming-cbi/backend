@@ -10,6 +10,7 @@ export class UserDTO {
   @IsNotEmpty()
   lastname: string;
   rol: string;
+  farmId?: string[];
 }
 
 export class UpdateUserDTO {
@@ -18,4 +19,5 @@ export class UpdateUserDTO {
   lastname?: string;
   password?: string;
   rol?: string;
+  farmId?: string[];
 }

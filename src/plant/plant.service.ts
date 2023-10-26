@@ -68,14 +68,19 @@ export class PlantService {
   async findAllForGalery(pagination: {
     page: string;
     perPage: string;
+    search: string;
   }): Promise<Plant[] | null> {
     const page = parseInt(pagination.page);
     const perPage = parseInt(pagination.perPage);
     const offset = (page - 1) * perPage;
+    const builtFilter = {
+      public: true,
+      name: { [Op.like]: `%${pagination.search ?? ''}%` },
+    };
     return this.plantRepository.findAll({
       limit: perPage,
       offset: offset,
-      where: { public: true },
+      where: builtFilter,
       include: [PlantGaleryLikes, PlantGaleryComments],
     });
   }

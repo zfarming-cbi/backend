@@ -7,9 +7,7 @@ export class PqrsService {
   constructor(
     @Inject(PQRS_REPOSITORY)
     private pqrsRepository: typeof Pqrs,
-  ) {
-    console.log('>>>>> ', this.pqrsRepository);
-  }
+  ) {}
 
   async create(
     args: {
@@ -44,7 +42,6 @@ export class PqrsService {
     const perPage = parseInt(pagination.perPage);
     const offset = (page - 1) * perPage;
     const companyId = tokenDecode.companyId;
-    console.log('>>>>> entro al servicio', this.pqrsRepository);
     return this.pqrsRepository.findAll({
       limit: perPage,
       offset: offset,

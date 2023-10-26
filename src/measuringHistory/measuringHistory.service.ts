@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
-// import { Sequelize } from 'sequelize';
 import {
   DEVICE_REPOSITORY,
   MEASURING_HISTORY_REPOSITORY,
@@ -51,28 +50,164 @@ export class MeasuringHistoryService {
       measuringHistoryItems,
     );
   }
-
-  async findAll(deviceId: string): Promise<object[] | null> {
-    const results = await this.measuringHistoryRepository.findAll({
+  async findAll(deviceId: string): Promise<{
+    dates: string[];
+    maxRange: number;
+    names: any[];
+    data: Record<string, any>;
+  } | null> {
+    const measurings = await this.measuringHistoryRepository.findAll({
       attributes: [
         'sensorId',
-        [Sequelize.fn('GROUP_CONCAT', Sequelize.col('value')), 'value'],
+        [
+          Sequelize.literal('DATE(MeassuringHistorical.createdAt)'),
+          'createdAt',
+        ],
+        [Sequelize.fn('AVG', Sequelize.literal('value')), 'value'],
       ],
-      where: { deviceId: deviceId },
+      where: {
+        deviceId: deviceId,
+      },
+      group: ['createdAt', 'sensorId'],
+      include: [
+        { model: Farm, attributes: [] },
+        { model: Sensor, attributes: ['name', 'min_range', 'max_range'] },
+        { model: Device, attributes: [] },
+      ],
+      order: ['createdAt'],
+      raw: true,
+    });
+
+    const dates = measurings
+      .map(({ createdAt }) => createdAt)
+      .sort((a, b) => new Date(a).getDate() - new Date(b).getDate());
+    const datesFormated = dates.map((date) =>
+      new Date(date).toLocaleDateString(undefined, {
+        month: 'long',
+        day: 'numeric',
+      }),
+    );
+
+    const namesSensor = measurings.map(
+      (measuring) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        measuring['sensor.name'],
+    );
+    const ranges = measurings.map(
+      (measuring) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        measuring['sensor.max_range'],
+    );
+    const dataGroupBySensor = measurings.reduce(
+      (acc, sensorData) => {
+        if (Object.keys(acc).includes(sensorData.sensorId + '')) {
+          acc[sensorData.sensorId + ''].values.push(sensorData.value);
+          acc[sensorData.sensorId + ''].date.push(sensorData.createdAt);
+          return acc;
+        }
+        return {
+          ...acc,
+          [sensorData.sensorId]: {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            name: sensorData['sensor.name'],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            minRange: sensorData['sensor.min_range'],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            maxRange: sensorData['sensor.max_range'],
+            values: [sensorData.value],
+            date: [sensorData.createdAt],
+          },
+        };
+      },
+      {} as Record<string, any>,
+    );
+
+    Object.keys(dataGroupBySensor).forEach((key) => {
+      dataGroupBySensor[key].values = Array.from(
+        new Set(dates.map((a) => a.toString())),
+      ).map((date) => {
+        const idx = dataGroupBySensor[key].date.findIndex((d: any) => {
+          return d === date;
+        });
+        if (idx === -1) {
+          return null;
+        }
+        return dataGroupBySensor[key].values[idx];
+      });
+    });
+    const orderData = Object.keys(dataGroupBySensor).map((key) => ({
+      sensorId: key,
+      name: dataGroupBySensor[key].name,
+      values: dataGroupBySensor[key].values,
+      minRange: dataGroupBySensor[key].minRange,
+      maxRange: dataGroupBySensor[key].maxRange,
+    }));
+    return {
+      names: namesSensor,
+      maxRange: Math.max(...ranges),
+      dates: Array.from(new Set(datesFormated.map((a) => a.toString()))),
+      data: orderData,
+    };
+  }
+  async findDataForDays(deviceId: string): Promise<object> {
+    const dateFilter = new Date();
+    dateFilter.setDate(dateFilter.getDate() - 7);
+    const measurings = await this.measuringHistoryRepository.findAll({
+      attributes: [
+        'sensorId',
+        [
+          Sequelize.fn(
+            'ROUND',
+            Sequelize.fn('AVG', Sequelize.literal('value')),
+            2,
+          ),
+          'value',
+        ],
+      ],
+      where: {
+        deviceId: deviceId,
+        createdAt: {
+          [Op.gte]: dateFilter,
+        },
+      },
       group: ['sensorId'],
       include: [
         { model: Farm, attributes: [] },
-        { model: Sensor, attributes: [] },
+        { model: Sensor, attributes: ['name', 'min_range', 'max_range'] },
         { model: Device, attributes: [] },
       ],
       raw: true,
     });
-    console.log('result', results);
-    const processedResults = results.map((result) => ({
-      sensorId: result.sensorId,
-      values: result.value.split(','),
-    }));
-    return processedResults;
+    const ranges = measurings.map(
+      (measuring) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        measuring['sensor.max_range'],
+    );
+    const namesSensor = measurings.map(
+      (measuring) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        measuring['sensor.name'],
+    );
+
+    const values = measurings.map(
+      (measuring) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        measuring['value'],
+    );
+
+    return {
+      namesSensor,
+      maxRange: Math.max(...ranges),
+      data: values,
+    };
   }
 
   async update(

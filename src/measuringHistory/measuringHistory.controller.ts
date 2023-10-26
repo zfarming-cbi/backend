@@ -24,19 +24,17 @@ export class MeasuringHistoryController {
     return this.measuringService.findAll(deviceId);
   }
 
+  @Get('/average/:deviceId')
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  getMeasuringsByDays(@Param('deviceId') deviceId: string) {
+    return this.measuringService.findDataForDays(deviceId);
+  }
+
   @Public()
   @Post('/')
   @HttpCode(HttpStatus.OK)
   createMeasurging(@Body() measuringHistoryDto: MeasuringHistoryDTO) {
     return this.measuringService.create(measuringHistoryDto);
   }
-
-  // @Patch(':id') // toDO: Se puede actualizar la medida de un sensor
-  // @HttpCode(HttpStatus.OK)
-  // updateMeasuring(
-  //   @Param('id') id: string,
-  //   @Body() measuringHistoryDto: MeasuringHistoryDTO,
-  // ) {
-  //   return this.measuringService.update(id, measuringHistoryDto);
-  // }
 }

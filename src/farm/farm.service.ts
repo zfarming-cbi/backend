@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Op } from 'sequelize';
 import { FARM_REPOSITORY } from 'src/database/constants';
-import { Device, Farm } from 'src/database/entities';
+import { Device, Farm, User } from 'src/database/entities';
 
 @Injectable()
 export class FarmService {
@@ -31,7 +31,7 @@ export class FarmService {
   async findOne(search: string): Promise<Farm | null> {
     return this.farmRepository.findOne({
       where: { [Op.or]: [{ name: search }, { id: search }] },
-      include: Device,
+      include: [Device, User],
     });
   }
 
