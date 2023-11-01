@@ -41,8 +41,14 @@ export const databaseProviders = [
         MeassuringHistorical,
         Pqrs,
       ]);
-      User.belongsToMany(Farm, { through: 'UserFarm' });
-      Farm.belongsToMany(User, { through: 'UserFarm' });
+      User.belongsToMany(Farm, {
+        as: 'farms',
+        through: 'UserFarm',
+      });
+      Farm.belongsToMany(User, {
+        as: 'users',
+        through: 'UserFarm',
+      });
       await sequelize.sync();
       return sequelize;
     },

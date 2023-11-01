@@ -68,7 +68,7 @@ export class UsersService {
     return this.userRepository.findOne({
       attributes: { exclude: ['password'] },
       where: { id },
-      include: Farm,
+      include: [{ model: Farm, as: 'farms' }],
     });
   }
 
@@ -108,7 +108,7 @@ export class UsersService {
       limit: perPage,
       offset: offset,
       where: builtFilter,
-      include: Farm,
+      include: [{ model: Farm, as: 'farms' }],
     });
   }
 
@@ -120,13 +120,14 @@ export class UsersService {
       lastname?: string;
       password?: string;
       uuid_forgot?: string;
-      farmId?: string[];
+      farms?: string[];
     },
   ): Promise<User | null> {
     await this.userRepository.update(args, { where: { id } });
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (args.farmId && user) {
-      args.farmId.forEach(async (farmId) => {
+    const user = await this.findById(id);
+    if (args.farms && user) {
+      console.log('usuario desde el update', user);
+      args.farms.forEach(async (farmId) => {
         const farm = (await this.farmService.findOne(farmId)) ?? '';
         await user.$add('farms', farm);
       });

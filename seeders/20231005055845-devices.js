@@ -5,6 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.bulkInsert('Devices', [
       {
+        id: 1,
         code: 'D001',
         name: 'Controlador de Cultivo',
         farmId: 1,
@@ -16,6 +17,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 2,
         code: 'D002',
         name: 'Controlador de Luz',
         farmId: 1,
@@ -27,6 +29,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 3,
         code: 'D003',
         name: 'Sistema de Riego Automático',
         farmId: 1,
@@ -38,6 +41,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 4,
         code: 'D004',
         name: 'Controlador de CO2',
         farmId: 1,
@@ -49,6 +53,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 5,
         code: 'D005',
         name: 'Sistema de Monitoreo Remoto',
         farmId: 1,
@@ -60,6 +65,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 6,
         code: 'D006',
         name: 'Controlador de Temperatura y Humedad',
         farmId: 1,
@@ -71,6 +77,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 7,
         code: 'D007',
         name: 'Controlador de Nutrientes',
         farmId: 1,
@@ -82,6 +89,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 8,
         code: 'D008',
         name: 'Controlador de Bombas de Agua',
         farmId: 1,
@@ -93,6 +101,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 9,
         code: 'D009',
         name: 'Sistema de Alarma',
         farmId: 1,
@@ -104,6 +113,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: 10,
         code: 'D010',
         name: 'Controlador de Bombillas LED',
         farmId: 1,

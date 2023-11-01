@@ -19,5 +19,5 @@ export class UpdateUserDTO {
   lastname?: string;
   password?: string;
   rol?: string;
-  farmId?: string[];
+  farms?: string[];
 }

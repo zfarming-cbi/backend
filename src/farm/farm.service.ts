@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Op } from 'sequelize';
+import { FARMS } from 'src/auth/constants';
 import { FARM_REPOSITORY } from 'src/database/constants';
 import { Device, Farm, User } from 'src/database/entities';
 
@@ -31,18 +32,49 @@ export class FarmService {
   async findOne(search: string): Promise<Farm | null> {
     return this.farmRepository.findOne({
       where: { [Op.or]: [{ name: search }, { id: search }] },
-      include: [Device, User],
+      include: [Device, { model: User, as: 'users' }],
     });
   }
 
-  async findAll(tokenDecode?: any): Promise<Farm[] | null> {
+  async findAll(tokenDecode?: any, search?: string): Promise<Farm[] | null> {
+    const companyId = tokenDecode.companyId;
+    const builtFilter: { companyId: string; end_crop_dt?: any } = {
+      companyId: companyId,
+    };
+    if (search && search === FARMS.ACTIVE) {
+      console.log('No entro al active');
+      builtFilter.end_crop_dt = { [Op.gt]: Date.now() };
+    }
+    if (search && search === FARMS.INACTIVE) {
+      builtFilter.end_crop_dt = { [Op.lt]: Date.now() };
+    }
+    console.log('builtFilter', builtFilter);
+
+    return this.farmRepository.findAll({
+      where: builtFilter,
+      order: [['end_crop_dt', 'DESC']],
+      include: Device,
+    });
+  }
+
+  async findAllForAsigned(
+    userId: string,
+    tokenDecode?: any,
+  ): Promise<any[] | null> {
     const companyId = tokenDecode.companyId;
     return this.farmRepository.findAll({
       where: {
         companyId,
       },
       order: [['end_crop_dt', 'DESC']],
-      include: Device,
+      include: [
+        {
+          model: User,
+          as: 'users',
+          where: { id: { [Op.ne]: userId } },
+          through: { attributes: [] },
+        },
+      ],
     });
   }
 

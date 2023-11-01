@@ -2,9 +2,9 @@
   "development": {
     "username": "user",
     "password": "password",
-    "database": "db",
+    "database": "zfarmingdb",
     "host": "localhost",
-    "port": "3606",
+    "port": "3306",
     "dialect": "mysql"
   }
 }

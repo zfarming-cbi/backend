@@ -7,3 +7,9 @@ export enum ROLES {
   ADMIN = 'ADMIN',
   BASIC = 'BASIC',
 }
+
+export enum FARMS {
+  ALL = 'all',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+}

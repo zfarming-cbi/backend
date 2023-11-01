@@ -3,16 +3,9 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    queryInterface.bulkInsert('Companies', [
-      {
-        id: 1,
-        nit: '11111-2',
-        logo: 'Centro de biotecnología',
-      },
-    ]);
     return queryInterface.bulkInsert('Farms', [
       {
-        id: 1,
+        id: 11,
         name: 'Granja 1',
         description: 'Granja de Zanahorias',
         start_crop_dt: '2023-06-01',
