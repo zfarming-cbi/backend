@@ -79,9 +79,12 @@ export class UsersService {
       search: string;
     },
     companyId?: number,
+    tokenDecode?: any,
   ): Promise<User[]> {
+    const userId = tokenDecode.sub;
     const builtFilter = {
       companyId,
+      id: { [Op.ne]: userId },
       [Op.or]: [
         {
           firstname: {
@@ -126,7 +129,11 @@ export class UsersService {
     await this.userRepository.update(args, { where: { id } });
     const user = await this.findById(id);
     if (args.farms && user) {
-      console.log('usuario desde el update', user);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      user?.farms.forEach((farm) => {
+        user.$remove('farms', farm);
+      });
       args.farms.forEach(async (farmId) => {
         const farm = (await this.farmService.findOne(farmId)) ?? '';
         await user.$add('farms', farm);

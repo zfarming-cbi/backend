@@ -32,8 +32,11 @@ export class UsersController {
   getUsers(
     @Param('companyId') companyId: number,
     @Query() pagination: PaginationDTO,
+    @Request() req: any,
   ) {
-    return this.usersService.findAll(pagination, companyId);
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = this.jwtService.decode(token);
+    return this.usersService.findAll(pagination, companyId, decodedToken);
   }
 
   @Roles('ADMIN')
