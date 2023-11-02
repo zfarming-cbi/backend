@@ -9,7 +9,7 @@ FROM node:18-alpine
 WORKDIR /home/app
 COPY --from=builder /home/app/dist /home/app/dist
 COPY --from=builder /home/app/package.json /home/app
-COPY --from=builder /home/app/src/mail/templates /home/app/src/mail/templates
+COPY --from=builder /home/app/src/templates /home/app/dist/templates
 RUN ln -s $PWD/images/ $PWD/dist/images
 RUN yarn install --prod
 

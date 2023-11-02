@@ -76,7 +76,7 @@ export class AuthService {
     return this.usersService.comparePassword(password, passwordSaved);
   }
 
-  async forgotPassword(email: string): Promise<object> {
+  async forgotPassword(email: string): Promise<{ message: string }> {
     const user = await this.usersService.findOne(email);
     if (!user) throw new UnauthorizedException();
     const uuid = uuidv4();
