@@ -28,7 +28,6 @@ export class MeasuringHistoryController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   getMeasuringsByDays(@Param('deviceId') deviceId: string) {
-    console.log('Measuring');
     return this.measuringService.findDataForDays(deviceId);
   }
 
