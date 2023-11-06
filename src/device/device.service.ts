@@ -37,13 +37,38 @@ export class DeviceService {
     });
   }
 
-  async findAllUnasigned(tokenDecode?: any): Promise<Device[] | null> {
+  async findAllUnasigned(
+    pagination: {
+      page: string;
+      perPage: string;
+      search: string;
+    },
+    tokenDecode?: any,
+  ): Promise<Device[] | null> {
     const companyId = tokenDecode.companyId;
+    const page = parseInt(pagination.page);
+    const perPage = parseInt(pagination.perPage);
+    const offset = (page - 1) * perPage;
+    const builtFilter = {
+      companyId: companyId,
+      farmId: null,
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: `%${pagination.search ?? ''}%`,
+          },
+        },
+        {
+          code: {
+            [Op.like]: `%${pagination.search ?? ''}%`,
+          },
+        },
+      ],
+    };
     return this.deviceRepository.findAll({
-      where: {
-        companyId: companyId,
-        farmId: null,
-      },
+      limit: perPage,
+      offset: offset,
+      where: builtFilter,
     });
   }
 

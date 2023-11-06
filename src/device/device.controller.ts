@@ -50,10 +50,13 @@ export class DeviceController {
 
   @Get('/')
   @HttpCode(HttpStatus.OK)
-  getDevicesUnasigned(@Request() req: any) {
+  getDevicesUnasigned(@Request() req: any, @Query() pagination: PaginationDTO) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    const devices = this.deviceService.findAllUnasigned(decodeToken);
+    const devices = this.deviceService.findAllUnasigned(
+      pagination,
+      decodeToken,
+    );
     return devices;
   }
 
