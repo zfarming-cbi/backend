@@ -13,16 +13,16 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
-import { PqrsDTO } from './dto/pqrs.dto';
-import { PqrsService } from './pqrs.service';
+import { SuggestionDTO } from './dto/suggestion.dto';
+import { SuggestionService } from './suggestion.service';
 import { PaginationDTO } from 'src/pagination/dto/pagination.dto';
 
 @ApiTags('pqrs')
 @ApiBearerAuth()
 @Controller('pqrs')
-export class PqrsController {
+export class SuggestionController {
   constructor(
-    private pqrsService: PqrsService,
+    private suggestionService: SuggestionService,
     private jwtService: JwtService,
   ) {}
 
@@ -31,32 +31,32 @@ export class PqrsController {
   getTickets(@Request() req: any, @Query() pagination: PaginationDTO) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.pqrsService.findAll(pagination, decodeToken);
+    return this.suggestionService.findAll(pagination, decodeToken);
   }
 
   @Get(':pqrsId')
   @HttpCode(HttpStatus.OK)
   getPqrs(@Param('pqrsId') pqrsId: string) {
-    return this.pqrsService.findOne(pqrsId);
+    return this.suggestionService.findOne(pqrsId);
   }
 
   @Post('/')
   @HttpCode(HttpStatus.OK)
-  createPqrs(@Body() pqrsDto: PqrsDTO, @Request() req: any) {
+  createPqrs(@Body() pqrsDto: SuggestionDTO, @Request() req: any) {
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
-    return this.pqrsService.create(pqrsDto, decodeToken);
+    return this.suggestionService.create(pqrsDto, decodeToken);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  updatePqrs(@Param('id') id: string, @Body() pqrsDto: PqrsDTO) {
-    return this.pqrsService.update(id, pqrsDto);
+  updatePqrs(@Param('id') id: string, @Body() pqrsDto: SuggestionDTO) {
+    return this.suggestionService.update(id, pqrsDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   deletePqrs(@Param('id') id: string) {
-    return this.pqrsService.delete(id);
+    return this.suggestionService.delete(id);
   }
 }

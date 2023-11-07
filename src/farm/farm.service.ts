@@ -48,7 +48,6 @@ export class FarmService {
     if (search && search === FARMS.INACTIVE) {
       builtFilter.end_crop_dt = { [Op.lt]: Date.now() };
     }
-    console.log('builtFilter', builtFilter);
 
     return this.farmRepository.findAll({
       where: builtFilter,

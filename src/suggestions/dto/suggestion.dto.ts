@@ -1,4 +1,4 @@
-export class PqrsDTO {
+export class SuggestionDTO {
   type: string;
   description: string;
 }

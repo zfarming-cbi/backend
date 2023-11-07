@@ -7,5 +7,5 @@ export * from './plantGaleryComments.entity';
 export * from './plantGaleryLikes.entity';
 export * from './sensor.entity';
 export * from './user.entity';
+export * from './suggestion.entity';
 export * from './repository.providers';
-export * from './pqrs.entity';

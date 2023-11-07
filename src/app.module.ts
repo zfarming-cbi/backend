@@ -14,7 +14,7 @@ import { MailModule } from './mail/mail.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { PlantGaleryCommentModule } from './plantGaleryComment/plantGaleryComment.module';
 import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module';
-import { PqrsModule } from './pqrs/pqrs.module';
+import { SuggestionModule } from './suggestions/suggestion.module';
 
 @Module({
   imports: [
@@ -39,7 +39,7 @@ import { PqrsModule } from './pqrs/pqrs.module';
     MeasuringHistoryModule,
     PlantGaleryCommentModule,
     PlantGaleryLikeModule,
-    PqrsModule,
+    SuggestionModule,
   ],
   controllers: [],
   providers: [],

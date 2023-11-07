@@ -7,8 +7,8 @@ import {
   Plant,
   PlantGaleryComments,
   PlantGaleryLikes,
-  Pqrs,
   Sensor,
+  Suggestion,
   User,
 } from './entities';
 import { SEQUELIZE } from './constants';
@@ -39,7 +39,7 @@ export const databaseProviders = [
         Sensor,
         Farm,
         MeassuringHistorical,
-        Pqrs,
+        Suggestion,
       ]);
       User.belongsToMany(Farm, {
         as: 'farms',
