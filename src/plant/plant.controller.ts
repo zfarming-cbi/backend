@@ -85,6 +85,33 @@ export class PlantController {
     return plant;
   }
 
+  @Post('/copy-plant')
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async copyPlant(@Body() plantDto: PlantDTO, @Request() req: any) {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodeToken = this.jwtService.decode(token);
+    const plant = await this.plantService.create(plantDto, decodeToken);
+    const imagePath = plantDto.image;
+    if (!imagePath || !fs.existsSync(imagePath)) {
+      this.plantService.update(plant.id, {
+        image: '',
+      });
+      return plant;
+    }
+    const filename = imagePath.split('/')[3];
+    const finalImagePath = `images/plants/${plant.id}`;
+    if (!fs.existsSync(finalImagePath)) {
+      fs.mkdirSync(finalImagePath, { recursive: true });
+    }
+    fs.copyFile(imagePath, `${finalImagePath}/${filename}`, () => {
+      this.plantService.update(plant.id, {
+        image: `${finalImagePath}/${filename}`,
+      });
+    });
+    return plant;
+  }
+
   @Post(':id')
   @ApiBearerAuth()
   @UseInterceptors(

@@ -1,10 +1,8 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import {
-  DEVICE_REPOSITORY,
-  MEASURING_HISTORY_REPOSITORY,
-} from 'src/database/constants';
+import { FARMS } from 'src/auth/constants';
+import { MEASURING_HISTORY_REPOSITORY } from 'src/database/constants';
 import {
   Device,
   Farm,
@@ -17,8 +15,6 @@ export class MeasuringHistoryService {
   constructor(
     @Inject(MEASURING_HISTORY_REPOSITORY)
     private measuringHistoryRepository: typeof MeassuringHistorical,
-    @Inject(DEVICE_REPOSITORY)
-    private deviceRepository: typeof Device,
   ) {}
 
   async create(args: {
@@ -50,6 +46,32 @@ export class MeasuringHistoryService {
       measuringHistoryItems,
     );
   }
+
+  async findAllForHistory(
+    tokenDecode?: any,
+    search?: string,
+  ): Promise<MeassuringHistorical[] | null> {
+    const companyId = tokenDecode.companyId;
+    const builtFilter: {
+      '$farm.companyId$': string;
+      '$farm.end_crop_dt$'?: any;
+    } = {
+      '$farm.companyId$': companyId,
+    };
+    if (search && search === FARMS.ACTIVE) {
+      builtFilter['$farm.end_crop_dt$'] = { [Op.gt]: Date.now() };
+    }
+    if (search && search === FARMS.INACTIVE) {
+      builtFilter['$farm.end_crop_dt$'] = { [Op.lt]: Date.now() };
+    }
+    console.log('Aqui esta el built', builtFilter);
+    return this.measuringHistoryRepository.findAll({
+      where: builtFilter,
+      order: [['$farm.end_crop_dt$', 'DESC']],
+      include: Farm,
+    });
+  }
+
   async findAll(deviceId: string): Promise<{
     dates: string[];
     maxRange: number;

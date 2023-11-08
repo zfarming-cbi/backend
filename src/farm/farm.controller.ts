@@ -28,7 +28,6 @@ export class FarmController {
   @Get('/')
   @HttpCode(HttpStatus.OK)
   async getFarms(@Request() req: any, @Query() show: ShowFarmDTO) {
-    console.log('Aqui esta el search', show);
     const token = req.headers.authorization.split(' ')[1];
     const decodeToken = this.jwtService.decode(token);
     const farms = await this.farmService.findAll(decodeToken, show.option);

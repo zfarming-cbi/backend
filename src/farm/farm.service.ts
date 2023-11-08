@@ -42,7 +42,6 @@ export class FarmService {
       companyId: companyId,
     };
     if (search && search === FARMS.ACTIVE) {
-      console.log('No entro al active');
       builtFilter.end_crop_dt = { [Op.gt]: Date.now() };
     }
     if (search && search === FARMS.INACTIVE) {

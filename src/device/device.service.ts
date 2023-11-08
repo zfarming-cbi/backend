@@ -51,24 +51,53 @@ export class DeviceService {
     const offset = (page - 1) * perPage;
     const builtFilter = {
       companyId: companyId,
-      farmId: null,
-      [Op.or]: [
+      [Op.and]: [
         {
-          name: {
-            [Op.like]: `%${pagination.search ?? ''}%`,
-          },
+          [Op.or]: [
+            {
+              farmId: null,
+            },
+            {
+              '$farm.end_crop_dt$': {
+                [Op.lt]: new Date(),
+              },
+            },
+          ],
         },
         {
-          code: {
-            [Op.like]: `%${pagination.search ?? ''}%`,
-          },
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: `%${pagination.search ?? ''}%`,
+              },
+            },
+            {
+              code: {
+                [Op.like]: `%${pagination.search ?? ''}%`,
+              },
+            },
+          ],
         },
       ],
+      // [Op.or]: [
+
+      //   {
+      //     name: {
+      //       [Op.like]: `%${pagination.search ?? ''}%`,
+      //     },
+      //   },
+      //   {
+      //     code: {
+      //       [Op.like]: `%${pagination.search ?? ''}%`,
+      //     },
+      //   },
+      // ],
     };
     return this.deviceRepository.findAll({
       limit: perPage,
       offset: offset,
       where: builtFilter,
+      include: Farm,
     });
   }
 

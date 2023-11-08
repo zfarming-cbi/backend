@@ -12,6 +12,14 @@ export class PlantDTO {
   image: any;
 }
 
+export class CopyPlantDTO {
+  name: string;
+  content: string;
+  public: boolean;
+  growing_time: string;
+  image: string;
+}
+
 export class UpdatePlantDTO {
   @ApiPropertyOptional()
   name?: string;
