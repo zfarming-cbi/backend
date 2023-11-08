@@ -79,19 +79,6 @@ export class DeviceService {
           ],
         },
       ],
-      // [Op.or]: [
-
-      //   {
-      //     name: {
-      //       [Op.like]: `%${pagination.search ?? ''}%`,
-      //     },
-      //   },
-      //   {
-      //     code: {
-      //       [Op.like]: `%${pagination.search ?? ''}%`,
-      //     },
-      //   },
-      // ],
     };
     return this.deviceRepository.findAll({
       limit: perPage,
