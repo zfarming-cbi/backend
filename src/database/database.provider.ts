@@ -28,6 +28,7 @@ export const databaseProviders = [
         database: configService.get('database.name'),
         username: configService.get('database.user'),
         password: configService.get('database.password'),
+        logging: false,
       });
       sequelize.addModels([
         Company,

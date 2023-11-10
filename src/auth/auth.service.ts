@@ -54,8 +54,7 @@ export class AuthService {
   async login(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOne(email);
     if (!user) throw new UnauthorizedException();
-
-    if (await this.validatePassword(pass, user.password)) {
+    if (!(await this.validatePassword(pass, user.password))) {
       throw new UnauthorizedException();
     }
     const payload = {

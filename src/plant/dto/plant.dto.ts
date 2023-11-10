@@ -27,8 +27,8 @@ export class UpdatePlantDTO {
   content?: string;
   @ApiPropertyOptional()
   public?: boolean;
-  @ApiPropertyOptional()
-  growing_time?: string;
+  // @ApiPropertyOptional()
+  // growing_time?: string;
   @ApiProperty({
     type: 'string',
     format: 'binary',

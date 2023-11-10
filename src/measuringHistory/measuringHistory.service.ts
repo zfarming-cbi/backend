@@ -64,7 +64,6 @@ export class MeasuringHistoryService {
     if (search && search === FARMS.INACTIVE) {
       builtFilter['$farm.end_crop_dt$'] = { [Op.lt]: Date.now() };
     }
-    console.log('>>>>>>>>>', builtFilter);
     return this.measuringHistoryRepository.findAll({
       where: builtFilter,
       order: [['$farm.end_crop_dt$', 'DESC']],

@@ -85,6 +85,48 @@ export class PlantController {
     return plant;
   }
 
+  @Post(':id')
+  @ApiBearerAuth()
+  @UseInterceptors(
+    FileInterceptor('files', {
+      storage: diskStorage({
+        destination: destination,
+        filename: renameImage,
+      }),
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @HttpCode(HttpStatus.OK)
+  async updatePlant(
+    @Param('id') id: string,
+    @Body() plantDto: UpdatePlantDTO,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    const validFields: Partial<UpdatePlantDTO> = {};
+    if (plantDto.name) validFields.name = plantDto.name;
+    if (plantDto.content) validFields.content = plantDto.content;
+    if (plantDto.public) validFields.public = plantDto.public;
+    // if (plantDto.growing_time) validFields.growing_time = plantDto.growing_time;
+    const tempImagePath = image ? image.path : null;
+    const plant = await this.plantService.findOne(id);
+    if (tempImagePath) {
+      const finalImagePath = `images/plants/${id}`;
+      if (!fs.existsSync(finalImagePath)) {
+        fs.mkdirSync(finalImagePath, { recursive: true });
+      }
+      if (plant?.image && fs.existsSync(plant.image)) {
+        fs.unlink(plant.image ?? '', (error) => {
+          if (error) {
+            throw new BadRequestException(`Error al borrar ${plant?.image}:`);
+          }
+        });
+      }
+      fs.renameSync(tempImagePath, `${finalImagePath}/${image.originalname}`);
+      validFields.image = `${finalImagePath}/${image.originalname}`;
+    }
+    return this.plantService.update(id, validFields);
+  }
+
   @Post('/copy-plant')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
@@ -110,48 +152,6 @@ export class PlantController {
       });
     });
     return plant;
-  }
-
-  @Post(':id')
-  @ApiBearerAuth()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: destination,
-        filename: renameImage,
-      }),
-    }),
-  )
-  @ApiConsumes('multipart/form-data')
-  @HttpCode(HttpStatus.OK)
-  async updatePlant(
-    @Param('id') id: string,
-    @Body() plantDto: UpdatePlantDTO,
-    @UploadedFile() image: Express.Multer.File,
-  ) {
-    const validFields: Partial<UpdatePlantDTO> = {};
-    if (plantDto.name) validFields.name = plantDto.name;
-    if (plantDto.content) validFields.content = plantDto.content;
-    if (plantDto.public) validFields.public = plantDto.public;
-    if (plantDto.growing_time) validFields.growing_time = plantDto.growing_time;
-    const tempImagePath = image ? image.path : null;
-    const plant = await this.plantService.findOne(id);
-    if (tempImagePath) {
-      const finalImagePath = `images/plants/${id}`;
-      if (!fs.existsSync(finalImagePath)) {
-        fs.mkdirSync(finalImagePath, { recursive: true });
-      }
-      if (plant?.image && fs.existsSync(plant.image)) {
-        fs.unlink(plant.image ?? '', (error) => {
-          if (error) {
-            throw new BadRequestException(`Error al borrar ${plant?.image}:`);
-          }
-        });
-      }
-      fs.renameSync(tempImagePath, `${finalImagePath}/${image.originalname}`);
-      validFields.image = `${finalImagePath}/${image.originalname}`;
-    }
-    return this.plantService.update(id, validFields);
   }
 
   @Public()
