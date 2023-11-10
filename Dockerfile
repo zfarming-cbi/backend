@@ -31,5 +31,6 @@ ENV URL_RECOVER_PASSWORD='https://zfarming-backend.projects.kriverdevice.com/api
 ENV VIEW_RECOVER_PASSWORD='https://zfarming.projects.kriverdevice.com/login'
 
 EXPOSE ${PORT}
-VOLUME ["/home/app"]
+VOLUME ["/home/app/dist/images"]
+VOLUME ["/home/app/images"]
 CMD [ "yarn", "start:prod" ]
