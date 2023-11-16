@@ -50,7 +50,7 @@ export class MeasuringHistoryService {
   async findAllForHistory(
     tokenDecode?: any,
     search?: string,
-  ): Promise<MeassuringHistorical[] | null> {
+  ): Promise<Farm[] | null> {
     const companyId = tokenDecode.companyId;
     const builtFilter: {
       '$farm.companyId$': string;
@@ -58,17 +58,20 @@ export class MeasuringHistoryService {
     } = {
       '$farm.companyId$': companyId,
     };
-    if (search && search === FARMS.ACTIVE) {
-      builtFilter['$farm.end_crop_dt$'] = { [Op.gt]: Date.now() };
-    }
+    const currentDate = Date.now();
     if (search && search === FARMS.INACTIVE) {
-      builtFilter['$farm.end_crop_dt$'] = { [Op.lt]: Date.now() };
+      builtFilter['$farm.end_crop_dt$'] = {
+        [Op.lt]: new Date(currentDate),
+      };
     }
-    return this.measuringHistoryRepository.findAll({
+    const meassurings = await this.measuringHistoryRepository.findAll({
+      attributes: ['farmId'],
       where: builtFilter,
-      order: [['$farm.end_crop_dt$', 'DESC']],
-      include: Farm,
+      order: [['farm', 'end_crop_dt', 'DESC']],
+      include: [{ model: Farm }],
+      group: ['farmId'],
     });
+    return meassurings.map((measuring) => measuring.farm);
   }
 
   async findAll(deviceId: string): Promise<{
@@ -77,6 +80,8 @@ export class MeasuringHistoryService {
     names: any[];
     data: Record<string, any>;
   } | null> {
+    const dateFilter = new Date();
+    dateFilter.setDate(dateFilter.getDate() - 1);
     const measurings = await this.measuringHistoryRepository.findAll({
       attributes: [
         'sensorId',
@@ -88,6 +93,9 @@ export class MeasuringHistoryService {
       ],
       where: {
         deviceId: deviceId,
+        createdAt: {
+          [Op.gte]: dateFilter,
+        },
       },
       group: ['createdAt', 'sensorId'],
       include: [
@@ -177,7 +185,7 @@ export class MeasuringHistoryService {
   }
   async findDataForDays(deviceId: string): Promise<object> {
     const dateFilter = new Date();
-    dateFilter.setDate(dateFilter.getDate() - 7);
+    dateFilter.setDate(dateFilter.getDate() - 1);
     const measurings = await this.measuringHistoryRepository.findAll({
       attributes: [
         'sensorId',

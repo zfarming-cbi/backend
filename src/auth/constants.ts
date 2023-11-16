@@ -13,3 +13,9 @@ export enum FARMS {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
 }
+
+export enum PLANTS {
+  LIKE = 'like',
+  LASTUPDATED = 'lastUpdate',
+  LASTCREATED = 'lastCreate',
+}

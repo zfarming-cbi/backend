@@ -17,10 +17,11 @@ export class PlantGaleryLikeService {
     return await this.plantGaleryLikeRepository.create(args);
   }
 
-  async findAll(userId: string): Promise<PlantGaleryLikes[] | null> {
+  async findAll(plantId: string): Promise<PlantGaleryLikes[] | null> {
     return this.plantGaleryLikeRepository.findAll({
       where: {
-        userId,
+        plantId,
+        like: true,
       },
     });
   }

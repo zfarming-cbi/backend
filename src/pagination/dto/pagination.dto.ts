@@ -5,4 +5,6 @@ export class PaginationDTO {
   perPage: string = '10';
   @ApiPropertyOptional()
   search: string = '';
+  @ApiPropertyOptional()
+  order: string = '';
 }

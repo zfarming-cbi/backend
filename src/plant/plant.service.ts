@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Op } from 'sequelize';
+import { Op, literal } from 'sequelize';
+import { PLANTS } from 'src/auth/constants';
 import { PLANT_REPOSITORY } from 'src/database/constants';
 import {
   Device,
@@ -69,6 +70,7 @@ export class PlantService {
     page: string;
     perPage: string;
     search: string;
+    order?: string;
   }): Promise<Plant[] | null> {
     const page = parseInt(pagination.page);
     const perPage = parseInt(pagination.perPage);
@@ -77,11 +79,51 @@ export class PlantService {
       public: true,
       name: { [Op.like]: `%${pagination.search ?? ''}%` },
     };
+    let fieldOrder: string = '';
+    if (pagination.order === PLANTS.LIKE) {
+      return this.plantRepository.findAll({
+        attributes: {
+          include: [
+            [
+              literal(
+                '(SELECT COUNT(*) FROM PlantGaleryLikes WHERE PlantGaleryLikes.plantId = Plant.id AND PlantGaleryLikes.like = true)',
+              ),
+              'likeCount',
+            ],
+          ],
+        },
+        limit: perPage,
+        offset: offset,
+        where: builtFilter,
+        include: [
+          {
+            model: PlantGaleryLikes,
+            where: { like: true },
+          },
+          {
+            model: PlantGaleryComments,
+          },
+        ],
+        order: [[literal('likeCount'), 'DESC']],
+      });
+    } else if (pagination.order === PLANTS.LASTUPDATED) {
+      fieldOrder = 'updatedAt';
+    } else {
+      fieldOrder = 'createdAt';
+    }
     return this.plantRepository.findAll({
       limit: perPage,
       offset: offset,
       where: builtFilter,
-      include: [PlantGaleryLikes, PlantGaleryComments],
+      include: [
+        {
+          model: PlantGaleryLikes,
+        },
+        {
+          model: PlantGaleryComments,
+        },
+      ],
+      order: [[fieldOrder, 'DESC']],
     });
   }
 

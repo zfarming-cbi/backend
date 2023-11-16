@@ -15,6 +15,8 @@ import { MulterModule } from '@nestjs/platform-express';
 import { PlantGaleryCommentModule } from './plantGaleryComment/plantGaleryComment.module';
 import { PlantGaleryLikeModule } from './plantGaleryLikes/plantGaleryLike.module';
 import { SuggestionModule } from './suggestions/suggestion.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './tasks/task.service';
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { SuggestionModule } from './suggestions/suggestion.module';
       envFilePath: '.env',
       load: [configuration],
     }),
+    ScheduleModule.forRoot(),
     MulterModule.register({
       dest: './images',
       limits: { fileSize: 10 * 1024 * 1024 },
@@ -42,6 +45,6 @@ import { SuggestionModule } from './suggestions/suggestion.module';
     SuggestionModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [TasksService],
 })
 export class AppModule {}

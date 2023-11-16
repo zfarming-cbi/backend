@@ -119,7 +119,10 @@ export class AuthService {
     const user = await this.usersService.findOne(id);
     if (!user) throw new UnauthorizedException();
     if (
-      await this.validatePassword(changePassword.currentPassword, user.password)
+      !(await this.validatePassword(
+        changePassword.currentPassword,
+        user.password,
+      ))
     ) {
       throw new UnauthorizedException();
     }
