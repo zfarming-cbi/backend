@@ -23,7 +23,6 @@ export class TasksService {
       deviceId: 1,
       farmId: 1,
     }));
-    console.log('measurings', meassurings);
     await this.measuringHistoryRepository.bulkCreate(meassurings);
     this.logger.log('Task created measurings executed');
   }
