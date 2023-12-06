@@ -77,12 +77,9 @@ export class MeasuringHistoryService {
   async findAll(deviceId: string): Promise<{
     dates: string[];
     maxRange: number;
-    names: any[];
-    // hours: any[];
+    names: string[];
     data: Record<string, any>;
   } | null> {
-    const dateFilter = new Date();
-    dateFilter.setHours(0, 0, 0, 0);
     const measurings = await this.measuringHistoryRepository.findAll({
       attributes: [
         'sensorId',
@@ -90,60 +87,35 @@ export class MeasuringHistoryService {
           Sequelize.literal('DATE(MeassuringHistorical.createdAt)'),
           'createdAt',
         ],
-        [
-          Sequelize.fn(
-            'GROUP_CONCAT',
-            Sequelize.literal('HOUR(MeassuringHistorical.createdAt)'),
-          ),
-          'createdHour',
-        ],
-        [Sequelize.fn('GROUP_CONCAT', Sequelize.literal('value')), 'values'],
-        // [
-        //   Sequelize.fn(
-        //     'GROUP_CONCAT',
-        //     Sequelize.fn('AVG', Sequelize.literal('value')),
-        //   ),
-        //   'values',
-        // ],
+        [Sequelize.fn('AVG', Sequelize.literal('value')), 'values'],
       ],
       where: {
         deviceId: deviceId,
-        createdAt: {
-          [Op.gte]: dateFilter,
-        },
       },
       group: ['createdAt', 'sensorId'],
       include: [
         { model: Farm, attributes: [] },
-        { model: Sensor, attributes: ['name', 'min_range', 'max_range'] },
+        {
+          model: Sensor,
+          attributes: ['name', 'min_range', 'max_range', 'graphical_unit'],
+        },
         { model: Device, attributes: [] },
       ],
       order: ['createdAt'],
       raw: true,
     });
 
-    // const dates = measurings
-    //   .map(({ createdAt }) => createdAt)
-    //   .sort((a, b) => new Date(a).getDate() - new Date(b).getDate());
+    const dates = measurings
+      .map(({ createdAt }) => createdAt)
+      .sort((a, b) => new Date(a).getDate() - new Date(b).getDate());
 
-    const datesFormated = measurings.map(({ createdAt }) =>
-      new Date(createdAt).toLocaleDateString(undefined, {
+    const datesFormated = dates.map((date) =>
+      new Date(date).toLocaleDateString(undefined, {
         month: 'long',
         day: 'numeric',
         timeZone: 'UTC',
       }),
     );
-
-    const orderData = measurings.map((data) => ({
-      ...data,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      values: data.values.split(','),
-    }));
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // const hours = measurings.createdHour.split(',').sort((a, b) => a - b);
 
     const namesSensor = measurings.map(
       (measuring) =>
@@ -158,87 +130,64 @@ export class MeasuringHistoryService {
         measuring['sensor.max_range'],
     );
 
-    // const result = measurings.reduce((acc, item) => {
-    //   if (acc && acc.sensorId === item.sensorId) {
-    //     acc.value = .concat(item.value)
-    //   }
-    // })
-    // const dataGroupBySensor = measurings.reduce(
-    //   (acc, sensorData) => {
-    //     if (
-    //       Object.keys(acc).includes(
-    //         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //         // @ts-ignore
-    //         `${sensorData.createdHour} idSensor: ${sensorData.sensorId}`,
-    //       )
-    //     ) {
-    //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //       // @ts-ignore
-    //       acc[sensorData.createdHour + ''].values.push(sensorData.value);
-    //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //       // @ts-ignore
-    //       acc[sensorData.createdHour + ''].date.push(sensorData.createdAt);
-    //       return acc;
-    //     }
-    //     return {
-    //       ...acc,
-    //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //       // @ts-ignore
-    //       [`${sensorData.createdHour} idSensor: ${sensorData.sensorId}`]: {
-    //         sensorId: sensorData.sensorId,
-    //         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //         // @ts-ignore
-    //         name: sensorData['sensor.name'],
-    //         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //         // @ts-ignore
-    //         minRange: sensorData['sensor.min_range'],
-    //         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //         // @ts-ignore
-    //         maxRange: sensorData['sensor.max_range'],
-    //         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //         // @ts-ignore
-    //         hour: [sensorData.createdHour],
-    //         values: [sensorData.value],
-    //         date: [sensorData.createdAt],
-    //       },
-    //     };
-    //   },
-    //   {} as Record<string, any>,
-    // );
-
-    // Object.keys(dataGroupBySensor).forEach((key) => {
-    //   dataGroupBySensor[key].values = Array.from(
-    //     new Set(hours.map((a) => a)),
-    //   ).map((hour) => {
-    //     const idx = dataGroupBySensor[key].hour.findIndex((d: any) => {
-    //       return d === hour;
-    //     });
-    //     if (idx === -1) {
-    //       return null;
-    //     }
-    //     return dataGroupBySensor[key].values[idx];
-    //   });
-    // });
-    // const orderData = Object.keys(dataGroupBySensor).map((key) => ({
-    //   sensorId: dataGroupBySensor[key].sensorId,
-    //   name: dataGroupBySensor[key].name,
-    //   values: dataGroupBySensor[key].values,
-    //   minRange: dataGroupBySensor[key].minRange,
-    //   maxRange: dataGroupBySensor[key].maxRange,
-    // }));
+    const dataGroupBySensor = measurings.reduce(
+      (acc, sensorData) => {
+        if (Object.keys(acc).includes(sensorData.sensorId + '')) {
+          acc[sensorData.sensorId + ''].values.push(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            parseFloat(sensorData.values).toFixed(2),
+          );
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          acc[sensorData.sensorId + ''].date.push(sensorData.createdAt);
+          return acc;
+        }
+        return {
+          ...acc,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          [sensorData.sensorId]: {
+            sensorId: sensorData.sensorId,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            name: sensorData['sensor.name'],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            minRange: sensorData['sensor.min_range'],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            minRange: sensorData['sensor.min_range'],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            graphical_unit: sensorData['sensor.graphical_unit'],
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            values: [parseFloat(sensorData.values).toFixed(2)],
+            date: [sensorData.createdAt],
+          },
+        };
+      },
+      {} as Record<string, any>,
+    );
+    const orderData = Object.keys(dataGroupBySensor).map((key) => ({
+      sensorId: dataGroupBySensor[key].sensorId,
+      name: dataGroupBySensor[key].name,
+      values: dataGroupBySensor[key].values,
+      minRange: dataGroupBySensor[key].minRange,
+      maxRange: dataGroupBySensor[key].maxRange,
+      graphical_unit: dataGroupBySensor[key].graphical_unit,
+    }));
 
     return {
-      names: namesSensor,
+      names: Array.from(new Set(namesSensor)),
       maxRange: Math.max(...ranges),
       dates: Array.from(new Set(datesFormated.map((a) => a.toString()))),
-      // hours: Array.from(new Set(hours.map((a: any) => a))),
       data: orderData,
     };
   }
 
   async findDataForDays(deviceId: string): Promise<object> {
-    // const dateFilter = new Date();
-    // dateFilter.setDate(dateFilter.getDate() - 1);
     const dateFilter = new Date();
     dateFilter.setHours(0, 0, 0, 0);
     const measurings = await this.measuringHistoryRepository.findAll({
@@ -280,17 +229,17 @@ export class MeasuringHistoryService {
         measuring['sensor.name'],
     );
 
-    const values = measurings.map(
-      (measuring) =>
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        measuring['value'],
-    );
+    // const values = measurings.map(
+    //   (measuring) =>
+    //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //     // @ts-ignore
+    //     measuring['value'],
+    // );
 
     return {
       namesSensor,
       maxRange: Math.max(...ranges),
-      data: values,
+      data: measurings,
     };
   }
 

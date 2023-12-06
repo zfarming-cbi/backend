@@ -32,9 +32,9 @@ export class Plant extends Model {
   image: string;
 
   @Column({
-    type: DataType.DATE,
+    type: DataType.INTEGER,
   })
-  growing_time: Date;
+  growing_time: number;
 
   @Column({
     type: DataType.BOOLEAN,
