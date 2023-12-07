@@ -105,12 +105,8 @@ export class MeasuringHistoryService {
       raw: true,
     });
 
-    const dates = measurings
-      .map(({ createdAt }) => createdAt)
-      .sort((a, b) => new Date(a).getDate() - new Date(b).getDate());
-
-    const datesFormated = dates.map((date) =>
-      new Date(date).toLocaleDateString(undefined, {
+    const datesFormated = measurings.map(({ createdAt }) =>
+      new Date(createdAt).toLocaleDateString(undefined, {
         month: 'long',
         day: 'numeric',
         timeZone: 'UTC',

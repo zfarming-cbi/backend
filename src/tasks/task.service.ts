@@ -18,7 +18,10 @@ export class TasksService {
   async handleCron() {
     const sensors = await this.sensorRepository.findAll();
     const meassurings = sensors.map((sensor) => ({
-      value: (Math.random() * 10).toFixed(2),
+      value: Math.floor(
+        Math.random() * (sensor.max_range - sensor.min_range + 1) +
+          sensor.min_range,
+      ),
       sensorId: sensor.id,
       deviceId: 1,
       farmId: 1,
