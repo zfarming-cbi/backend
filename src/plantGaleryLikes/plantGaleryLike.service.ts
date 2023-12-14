@@ -12,8 +12,14 @@ export class PlantGaleryLikeService {
   async create(args: {
     like: number;
     plantId: string;
-    userId?: string;
-  }): Promise<PlantGaleryLikes> {
+    userId: string;
+  }): Promise<PlantGaleryLikes | null> {
+    const existLike = await this.findOne(args.plantId, args.userId);
+    if (existLike) {
+      console.log('>>>>>>>like', args.like);
+      this.update(existLike.id, { like: args.like });
+      return await this.findOne(args.plantId, args.userId);
+    }
     return await this.plantGaleryLikeRepository.create(args);
   }
 

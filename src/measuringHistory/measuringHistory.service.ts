@@ -57,16 +57,16 @@ export class MeasuringHistoryService {
       '$farm.end_crop_dt$'?: any;
     } = {
       '$farm.companyId$': companyId,
+      '$farm.end_crop_dt$': { [Op.gt]: Date.now() },
     };
-    const currentDate = Date.now();
     if (search && search === FARMS.INACTIVE) {
       builtFilter['$farm.end_crop_dt$'] = {
-        [Op.lt]: new Date(currentDate),
+        [Op.lt]: Date.now(),
       };
     }
     const meassurings = await this.measuringHistoryRepository.findAll({
       attributes: ['farmId'],
-      where: builtFilter,
+      where: { [Op.and]: builtFilter },
       order: [['farm', 'end_crop_dt', 'DESC']],
       include: [{ model: Farm }],
       group: ['farmId'],
