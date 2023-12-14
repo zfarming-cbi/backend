@@ -29,6 +29,7 @@ export const databaseProviders = [
         username: configService.get('database.user'),
         password: configService.get('database.password'),
         logging: false,
+        sync: { force: false, alter: true },
       });
       sequelize.addModels([
         Company,
@@ -50,7 +51,7 @@ export const databaseProviders = [
         as: 'users',
         through: 'UserFarm',
       });
-      await sequelize.sync();
+      await sequelize.sync({ alter: true, force: false });
       return sequelize;
     },
   },
