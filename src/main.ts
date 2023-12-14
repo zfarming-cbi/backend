@@ -29,7 +29,7 @@ async function bootstrap() {
   SwaggerModule.setup('/docs', app, document);
   const configService = app.get(ConfigService);
   const port = configService.get('port');
-  await app.listen(port);
+  await app.listen(process.env.PORT || port);
 }
 
 bootstrap();
